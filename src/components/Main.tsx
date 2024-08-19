@@ -1,6 +1,6 @@
 "use client";
 import { LatLngTuple } from 'leaflet';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Timeline from './Timeline';
 import { Weather as WeatherType, ParsedMetar, WildfireData, Flight } from '../lib/types';
 import Weather from './Weather';
@@ -8,6 +8,9 @@ import { SettingsSheet } from './SettingsSheet';
 import { SettingsProvider } from '../contexts/SettingsContext';
 import { usePageSettings } from '../contexts/SettingsContext';
 import dynamic from 'next/dynamic';
+import getWildfireData from '@/lib/getWildfireData';
+import { Loader } from 'lucide-react';
+
 
 const Fires = dynamic(() => import('./Fires'), {
     ssr: false,
@@ -30,8 +33,22 @@ const Announcements = dynamic(() => import('./Announcements'), {
 });
 
 const position = [38.2, 23.9] as LatLngTuple;
-export default function Main({ wildfireData }: { wildfireData: WildfireData }) {
+export default function Main() {
     const [zuluTime, setZuluTime] = useState(new Date());
+    const [wildfireData, setWildfireData] = useState<WildfireData | null>(null);
+
+    useEffect(() => {
+        getWildfireData().then(setWildfireData);
+    }, []);
+
+    if (!wildfireData) {
+        return (
+            <div className="h-screen w-screen flex items-center justify-center">
+                <Loader />
+            </div>
+        )
+    }
+
 
     return (
         <SettingsProvider zuluTime={zuluTime} location={wildfireData.wildfire.position} timezone={wildfireData.wildfire.timezone}>
