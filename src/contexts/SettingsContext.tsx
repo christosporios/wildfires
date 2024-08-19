@@ -57,7 +57,7 @@ export function SettingsProvider({ children, zuluTime, location, timezone }: { c
         dataLayers: {
             fires: true,
             flights: true,
-            evacuationOrders: true,
+            evacuationOrders: false,
             weather: true,
             waterDrops: false,
         },

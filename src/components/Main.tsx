@@ -73,7 +73,7 @@ function MainContent({
     const { settings } = usePageSettings();
 
     return (
-        <div className="h-[100vh] w-full relative">
+        <div className="h-[100dvh] w-full relative">
             <MapComponent position={position} zoom={wildfireData.wildfire.zoom}>
                 {settings.dataLayers.flights && (
                     <Flights flightData={wildfireData.flights} zuluTime={zuluTime} />
