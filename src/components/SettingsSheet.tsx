@@ -85,7 +85,7 @@ export function SettingsSheet() {
                                 onCheckedChange={handleDataLayerChange('flights')}
                             />
                         </Setting>
-                        <Setting label="Evacuation Orders" description="112 (twitter)">
+                        <Setting label="Civil Protection Announcements" description="112 (twitter)">
                             <Switch
                                 id="evacuation"
                                 checked={settings.dataLayers.evacuationOrders}

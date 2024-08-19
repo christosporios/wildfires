@@ -24,6 +24,11 @@ const MapComponent = dynamic(() => import('./Map'), {
     loading: () => <p>Loading map...</p>
 });
 
+const Announcements = dynamic(() => import('./Announcements'), {
+    ssr: false,
+    loading: () => <p>Loading announcements...</p>
+});
+
 const position = [38.2, 23.9] as LatLngTuple;
 export default function Main({ wildfireData }: { wildfireData: WildfireData }) {
     const [zuluTime, setZuluTime] = useState(new Date());
@@ -60,6 +65,12 @@ function MainContent({
                 {settings.dataLayers.fires && (
                     <Fires fires={wildfireData.fires} zuluTime={zuluTime} />
                 )}
+
+                {settings.dataLayers.evacuationOrders && (
+                    <div className="absolute top-4 left-4 z-[1000]">
+                        <Announcements announcements={wildfireData.announcements} zuluTime={zuluTime} />
+                    </div>
+                )}
             </MapComponent>
             <SettingsSheet />
             <div className="absolute bottom-0 left-0 right-0 z-[1000]">
@@ -70,6 +81,7 @@ function MainContent({
                     <Weather metars={wildfireData.metars} zuluTime={zuluTime} />
                 </div>
             )}
+
         </div>
     )
 }

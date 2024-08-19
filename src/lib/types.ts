@@ -6,6 +6,7 @@ export interface WildfireData {
         viirs: Fire[];
         modis: Fire[];
     };
+    announcements: AnnouncementsData;
 }
 
 export interface ParsedMetar {
@@ -193,4 +194,23 @@ export interface Fire {
     instrument: string;
     satellite: string;
     brightness: number;
+}
+
+type Coordinates = [number, number];
+
+export interface Announcement {
+    tweetUrl: string;
+    dateString: string;
+    type: "alert" | "evacuate";
+    timestamp: number;
+    from: string[];
+    to?: string[];
+}
+
+export interface AnnouncementsData {
+    areaNames: string[];
+    announcements: Announcement[];
+    areaCoordinates: {
+        [areaName: string]: Coordinates;
+    };
 }

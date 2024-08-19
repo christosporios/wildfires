@@ -1,0 +1,285 @@
+{
+    "areaNames": [
+      "Mousges, Southern Pelion, Magnesia",
+      "Erithros, Nea Makri",
+      "Rafina",
+      "Marathon",
+      "Vrana, Marathon",
+      "Nea Makri",
+      "Desi Gerakas",
+      "Gerakas",
+      "Kaletzi, Marathon",
+      "Dionisos",
+      "Kifisia",
+      "Krasa Ano Vrilissia",
+      "Vrilissia",
+      "Chalandri",
+      "Nea Penteli",
+      "Palaia Penteli",
+      "Patima Chalandriou",
+      "Patima Vrilissia",
+      "Spatatziki (Pefkofyto), Marathon",
+      "Agios Stefanos",
+      "Kallitechnoupoli",
+      "Daou Pentelis",
+      "Drafi",
+      "Dioni",
+      "Dasamari",
+      "Pallini",
+      "Anatoli",
+      "Anthousa",
+      "Daou Penteli",
+      "Agios Spiridonas",
+      "Dione",
+      "Damarasi",
+      "Melissia",
+      "Penteli",
+      "Politia",
+      "Ekali",
+      "Nea Erithraia",
+      "Drosia",
+      "Rapentosa",
+      "Rodopoli",
+      "Amigdaleza, Stamata",
+      "Grammatiko",
+      "Mikrochori, Oropos",
+      "Kapandriti",
+      "Afidnes",
+      "Stamata",
+      "Agio Stefano",
+      "Vothonas",
+      "Kalentzi",
+      "Pourithi",
+      "Monastery of Panagia, Varnava",
+      "Agia Kyriaki, Kastrí, Evia",
+      "Eretria",
+      "Varnava",
+      "Varnavas"
+    ],
+    "announcements": [
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1823373317883007064",
+        "dateString": "2024-08-13T17:57:30",
+        "type": "alert",
+        "from": ["Mousges, Southern Pelion, Magnesia"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1823183861632716946",
+        "dateString": "2024-08-13T05:24:40",
+        "type": "evacuate",
+        "from": ["Erithros, Nea Makri"],
+        "to": ["Rafina"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1823114492332683652",
+        "dateString": "2024-08-13T00:49:01",
+        "type": "alert",
+        "from": ["Marathon"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1823094331852607655",
+        "dateString": "2024-08-12T23:28:54",
+        "type": "evacuate",
+        "from": ["Vrana, Marathon"],
+        "to": ["Nea Makri"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1823044610467529069",
+        "dateString": "2024-08-12T20:11:20",
+        "type": "evacuate",
+        "from": ["Desi Gerakas"],
+        "to": ["Gerakas"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822993857497166159",
+        "dateString": "2024-08-12T16:49:39",
+        "type": "evacuate",
+        "from": ["Kaletzi, Marathon"],
+        "to": ["Marathon"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822989432217031009",
+        "dateString": "2024-08-12T16:32:04",
+        "type": "evacuate",
+        "from": ["Dionisos"],
+        "to": ["Kifisia"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822971522622894249",
+        "dateString": "2024-08-12T15:20:54",
+        "type": "evacuate",
+        "from": ["Krasa Ano Vrilissia"],
+        "to": ["Vrilissia", "Chalandri"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822954996301701198",
+        "dateString": "2024-08-12T14:15:14",
+        "type": "evacuate",
+        "from": ["Nea Penteli", "Palaia Penteli", "Patima Chalandriou", "Patima Vrilissia"],
+        "to": ["Chalandri", "Vrilissia"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822951994480291981",
+        "dateString": "2024-08-12T14:03:18",
+        "type": "evacuate",
+        "from": ["Spatatziki (Pefkofyto), Marathon"],
+        "to": ["Agios Stefanos"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822891349672116731",
+        "dateString": "2024-08-12T10:02:20",
+        "type": "evacuate",
+        "from": ["Kallitechnoupoli"],
+        "to": ["Rafina"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822889840595042742",
+        "dateString": "2024-08-12T09:56:20",
+        "type": "evacuate",
+        "from": ["Daou Pentelis"],
+        "to": ["Rafina"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822885032429486121",
+        "dateString": "2024-08-12T09:37:13",
+        "type": "evacuate",
+        "from": ["Drafi", "Dioni", "Dasamari"],
+        "to": ["Pallini"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822838314153443773",
+        "dateString": "2024-08-12T06:31:35",
+        "type": "evacuate",
+        "from": ["Anatoli"],
+        "to": ["Nea Makri"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822828444457021778",
+        "dateString": "2024-08-12T05:52:22",
+        "type": "alert",
+        "from": ["Anthousa"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822827899373670607",
+        "dateString": "2024-08-12T05:50:12",
+        "type": "evacuate",
+        "from": ["Daou Penteli", "Agios Spiridonas"],
+        "to": ["Rafina"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822825472301875579",
+        "dateString": "2024-08-12T05:40:33",
+        "type": "evacuate",
+        "from": ["Drafi", "Dione", "Damarasi", "Rafina"],
+        "to": ["Pallini"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822819935371866219",
+        "dateString": "2024-08-12T05:18:33",
+        "type": "evacuate",
+        "from": ["Nea Penteli", "Palaia Penteli"],
+        "to": ["Melissia", "Vrilissia"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822816116235698567",
+        "dateString": "2024-08-12T05:03:23",
+        "type": "alert",
+        "from": ["Penteli", "Nea Penteli", "Melissia", "Politia", "Ekali", "Drafi", "Nea Erithraia"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822735854827123196",
+        "dateString": "2024-08-11T23:44:27",
+        "type": "evacuate",
+        "from": ["Dionisos"],
+        "to": ["Drosia", "Kifisia"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822733454343053749",
+        "dateString": "2024-08-11T23:34:54",
+        "type": "evacuate",
+        "from": ["Rapentosa"],
+        "to": ["Drosia", "Kifisia"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822721164961054967",
+        "dateString": "2024-08-11T22:46:04",
+        "type": "evacuate",
+        "from": ["Marathon"],
+        "to": ["Nea Makri"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822714426656506158",
+        "dateString": "2024-08-11T22:19:18",
+        "type": "alert",
+        "from": ["Marathon"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822681573453340993",
+        "dateString": "2024-08-11T20:08:45",
+        "type": "evacuate",
+        "from": ["Rodopoli", "Amigdaleza, Stamata"],
+        "to": ["Kifisia"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822677036206330345",
+        "dateString": "2024-08-11T19:50:43",
+        "type": "evacuate",
+        "from": ["Grammatiko"],
+        "to": ["Marathon"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822667780383985688",
+        "dateString": "2024-08-11T19:13:57",
+        "type": "evacuate",
+        "from": ["Mikrochori, Oropos"],
+        "to": ["Kapandriti", "Afidnes"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822661955821166999",
+        "dateString": "2024-08-11T18:50:48",
+        "type": "evacuate",
+        "from": ["Stamata"],
+        "to": ["Drosia", "Kifisia"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822657280501751923",
+        "dateString": "2024-08-11T18:32:13",
+        "type": "alert",
+        "from": ["Stamata", "Rodopoli", "Agio Stefano", "Dionisos"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822633330392605138",
+        "dateString": "2024-08-11T16:57:03",
+        "type": "evacuate",
+        "from": ["Vothonas", "Kalentzi", "Pourithi"],
+        "to": ["Marathon"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822631123660218548",
+        "dateString": "2024-08-11T16:48:17",
+        "type": "evacuate",
+        "from": ["Monastery of Panagia, Varnava"],
+        "to": ["Grammatiko"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822630387861926048",
+        "dateString": "2024-08-11T16:45:21",
+        "type": "evacuate",
+        "from": ["Agia Kyriaki, Kastrí, Evia"],
+        "to": ["Eretria"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822613794792608098",
+        "dateString": "2024-08-11T15:39:25",
+        "type": "evacuate",
+        "from": ["Varnava"],
+        "to": ["Grammatiko", "Kapandriti"]
+      },
+      {
+        "tweetUrl": "https://x.com/112Greece/status/1822612660438872571",
+        "dateString": "2024-08-11T15:34:55",
+        "type": "alert",
+        "from": ["Varnavas"]
+      }
+    ]
+  }
