@@ -266,7 +266,7 @@ export function SettingsSheet() {
                     </CollapsibleSection>
                 </div>
                 <footer className="mt-auto pt-4 text-center text-xs text-muted-foreground">
-                    <p>Don't use this for anything important.</p>
+                    <p>Do not use this for anything important.</p>
                     <p><a href="https://twitter.com/christosporios" target="_blank" rel="noopener noreferrer" className="underline">@christosporios</a></p>
                 </footer>
             </SheetContent>

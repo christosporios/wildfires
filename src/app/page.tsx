@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <Main wildfireData={{
       metars: metars as ParsedMetar[],
-      flights: flightData as { [flightId: string]: Flight },
+      flights: flightData as any as { [flightId: string]: Flight },
       wildfire: wildfireData as any as Wildfire,
       fires: fires as {
         viirs: Fire[];
