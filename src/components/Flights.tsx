@@ -7,12 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { usePageSettings } from '../contexts/SettingsContext';
 interface FlightsProps {
     flightData: { [flightId: string]: Flight };
-    currentTime: Date;
+    zuluTime: Date;
 }
 
-const INTERPOLATE_POSITIONS = true;
-
-export default function Flights({ flightData, currentTime }: FlightsProps) {
+export default function Flights({ flightData, zuluTime }: FlightsProps) {
 
     const { isDarkMode, settings } = usePageSettings();
     const currentFlights = Object.values(flightData).filter(flight => {
@@ -20,34 +18,33 @@ export default function Flights({ flightData, currentTime }: FlightsProps) {
         if (trackPositions.length === 0) return false;
         const firstTimestamp = trackPositions[0].timestamp * 1000;
         const lastTimestamp = trackPositions[trackPositions.length - 1].timestamp * 1000;
-        return firstTimestamp <= currentTime.getTime() && lastTimestamp >= currentTime.getTime();
+        return firstTimestamp <= zuluTime.getTime() && lastTimestamp >= zuluTime.getTime();
     });
+
     return (
         <>
-            <SettingsSheet />
             {currentFlights.map(flight => {
                 const trackPositions = flight.data.flight.track;
                 let latestPosition;
                 let trail: { latitude: number; longitude: number; timestamp: number }[] = [];
 
-                const currentTimeMs = currentTime.getTime();
-                const fifteenMinutesAgo = currentTimeMs - 15 * 60 * 1000;
-                const filteredPositions = trackPositions.filter(pos => pos.timestamp * 1000 > fifteenMinutesAgo && pos.timestamp * 1000 <= currentTimeMs);
+                const fifteenMinutesAgo = zuluTime.getTime() - 15 * 60 * 1000;
+                const filteredPositions = trackPositions.filter(pos => pos.timestamp * 1000 > fifteenMinutesAgo && pos.timestamp * 1000 <= zuluTime.getTime());
 
-                if (INTERPOLATE_POSITIONS && filteredPositions.length >= 2) {
-                    const prevIndex = filteredPositions.findIndex(pos => pos.timestamp * 1000 > currentTimeMs) - 1;
+                if (settings.interpolateAircraftPositions && filteredPositions.length >= 2) {
+                    const prevIndex = trackPositions.findIndex(pos => pos.timestamp * 1000 > zuluTime.getTime()) - 1;
 
-                    if (prevIndex >= 0 && prevIndex < filteredPositions.length - 1) {
-                        const prevPos = filteredPositions[prevIndex];
-                        const nextPos = filteredPositions[prevIndex + 1];
+                    if (prevIndex >= 0 && prevIndex < trackPositions.length - 1) {
+                        const prevPos = trackPositions[prevIndex];
+                        const nextPos = trackPositions[prevIndex + 1];
                         const timeDiff = nextPos.timestamp - prevPos.timestamp;
-                        const fraction = (currentTimeMs / 1000 - prevPos.timestamp) / timeDiff;
+                        const fraction = (zuluTime.getTime() / 1000 - prevPos.timestamp) / timeDiff;
 
                         latestPosition = {
                             latitude: prevPos.latitude + (nextPos.latitude - prevPos.latitude) * fraction,
                             longitude: prevPos.longitude + (nextPos.longitude - prevPos.longitude) * fraction,
                             heading: prevPos.heading + (nextPos.heading - prevPos.heading) * fraction,
-                            timestamp: currentTimeMs / 1000
+                            timestamp: zuluTime.getTime() / 1000
                         };
                     } else {
                         latestPosition = filteredPositions[filteredPositions.length - 1];
@@ -63,11 +60,11 @@ export default function Flights({ flightData, currentTime }: FlightsProps) {
                 // Only generate trail if showAircraftTrails is true in settings
                 if (settings.showAircraftTrails) {
                     // Generate trail for the last 30 minutes, keeping at most one position per 10 seconds
-                    const thirtyMinutesAgo = currentTime.getTime() - 30 * 60 * 1000;
+                    const thirtyMinutesAgo = zuluTime.getTime() - 30 * 60 * 1000;
                     let lastTenSeconds = -1;
                     trail = trackPositions.filter(pos => {
                         const posTime = pos.timestamp * 1000;
-                        if (posTime <= currentTime.getTime() && posTime > thirtyMinutesAgo) {
+                        if (posTime <= zuluTime.getTime() && posTime > thirtyMinutesAgo) {
                             const posTenSeconds = Math.floor(pos.timestamp / 10);
                             if (posTenSeconds !== lastTenSeconds) {
                                 lastTenSeconds = posTenSeconds;

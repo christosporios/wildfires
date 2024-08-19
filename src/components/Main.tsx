@@ -1,6 +1,5 @@
 "use client";
 import { LatLngTuple } from 'leaflet';
-import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import Timeline from './Timeline';
 import { Weather as WeatherType, ParsedMetar, WildfireData, Flight } from '../lib/types';
@@ -8,26 +7,33 @@ import Weather from './Weather';
 import { SettingsSheet } from './SettingsSheet';
 import { SettingsProvider } from '../contexts/SettingsContext';
 import { usePageSettings } from '../contexts/SettingsContext';
+import dynamic from 'next/dynamic';
 
-const MapComponent = dynamic(() => import('./Map'), {
+const Fires = dynamic(() => import('./Fires'), {
     ssr: false,
-    loading: () => <p>Loading map...</p>
+    loading: () => <p>Loading fires...</p>
 });
 
 const Flights = dynamic(() => import('./Flights'), {
     ssr: false,
     loading: () => <p>Loading flights...</p>
 });
+
+const MapComponent = dynamic(() => import('./Map'), {
+    ssr: false,
+    loading: () => <p>Loading map...</p>
+});
+
 const position = [38.2, 23.9] as LatLngTuple;
 export default function Main({ wildfireData }: { wildfireData: WildfireData }) {
-    const [currentTime, setCurrentTime] = useState(new Date());
+    const [zuluTime, setZuluTime] = useState(new Date());
 
     return (
-        <SettingsProvider currentTime={currentTime} location={wildfireData.wildfire.position}>
+        <SettingsProvider zuluTime={zuluTime} location={wildfireData.wildfire.position} timezone={wildfireData.wildfire.timezone}>
             <MainContent
                 wildfireData={wildfireData}
-                currentTime={currentTime}
-                setCurrentTime={setCurrentTime}
+                zuluTime={zuluTime}
+                setZuluTime={setZuluTime}
             />
         </SettingsProvider>
     )
@@ -35,29 +41,33 @@ export default function Main({ wildfireData }: { wildfireData: WildfireData }) {
 
 function MainContent({
     wildfireData,
-    currentTime,
-    setCurrentTime,
+    zuluTime,
+    setZuluTime,
 }: {
     wildfireData: WildfireData;
-    currentTime: Date;
-    setCurrentTime: React.Dispatch<React.SetStateAction<Date>>;
+    zuluTime: Date;
+    setZuluTime: React.Dispatch<React.SetStateAction<Date>>;
 }) {
     const { settings } = usePageSettings();
 
     return (
         <div className="h-[100vh] w-full relative">
-            <MapComponent position={position} >
+            <MapComponent position={position} zoom={wildfireData.wildfire.zoom}>
                 {settings.dataLayers.flights && (
-                    <Flights flightData={wildfireData.flights} currentTime={currentTime} />
+                    <Flights flightData={wildfireData.flights} zuluTime={zuluTime} />
+                )}
+
+                {settings.dataLayers.fires && (
+                    <Fires fires={wildfireData.fires} zuluTime={zuluTime} />
                 )}
             </MapComponent>
             <SettingsSheet />
             <div className="absolute bottom-0 left-0 right-0 z-[1000]">
-                <Timeline startDate={new Date(wildfireData.wildfire.start)} endDate={new Date(wildfireData.wildfire.end)} tick={setCurrentTime} />
+                <Timeline startDate={new Date(wildfireData.wildfire.start)} endDate={new Date(wildfireData.wildfire.end)} tick={setZuluTime} timezone={wildfireData.wildfire.timezone} />
             </div>
             {settings.dataLayers.weather && (
                 <div className="absolute top-4 right-4 z-[1000]">
-                    <Weather metars={wildfireData.metars} currentTime={currentTime} />
+                    <Weather metars={wildfireData.metars} zuluTime={zuluTime} />
                 </div>
             )}
         </div>

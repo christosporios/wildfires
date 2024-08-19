@@ -1,13 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { WindSpeedUnit, TemperatureUnit, LengthUnit, Theme } from '../lib/types';
+import { WindSpeedUnit, TemperatureUnit, LengthUnit, Theme, AircraftSpeedUnit } from '../lib/types';
 import { useTheme } from "next-themes"
 import { getSunrise, getSunset } from "sunrise-sunset-js";
+import { toZonedTime } from 'date-fns-tz';
 
 
-interface PageSettings {
+export interface PageSettings {
     watchMode: boolean;
     showAircraftTrails: boolean;
+    showSatelliteMap: boolean;
+    interpolateAircraftPositions: boolean;
     theme: Theme;
+    fireSource: 'MODIS and VIIRS' | 'VIIRS only' | 'MODIS only';
+    fireFadeTime: number;
     units: {
         aircraftSpeed: AircraftSpeedUnit;
         windSpeed: WindSpeedUnit;
@@ -32,24 +37,29 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
-export function SettingsProvider({ children, currentTime, location }: { children: React.ReactNode, currentTime: Date, location: [number, number] }) {
+export function SettingsProvider({ children, zuluTime, location, timezone }: { children: React.ReactNode, zuluTime: Date, location: [number, number], timezone: string }) {
     const { setTheme } = useTheme();
     const [settings, setSettings] = useState<PageSettings>({
         watchMode: false,
         showAircraftTrails: true,
+        showSatelliteMap: false,
+        interpolateAircraftPositions: true,
+        fireSource: 'MODIS and VIIRS',
         theme: 'day-night',
+        fireFadeTime: 12 * 60 * 60 * 1000,
         units: {
             windSpeed: 'knots',
             temperature: 'celsius',
             altitude: 'meters',
             height: 'meters',
+            aircraftSpeed: 'knots',
         },
         dataLayers: {
             fires: true,
             flights: true,
             evacuationOrders: true,
             weather: true,
-            waterDrops: true,
+            waterDrops: false,
         },
     });
 
@@ -59,7 +69,7 @@ export function SettingsProvider({ children, currentTime, location }: { children
         };
 
         updateTheme();
-    }, [settings.theme, currentTime, setTheme]);
+    }, [settings.theme, zuluTime, setTheme]);
 
 
     useEffect(() => {
@@ -81,9 +91,12 @@ export function SettingsProvider({ children, currentTime, location }: { children
         if (settings.theme === 'dark') return true;
         if (settings.theme === 'light') return false;
 
-        let sunrise = getSunrise(location[0], location[1], currentTime);
-        let sunset = getSunset(location[0], location[1], currentTime);
-        return currentTime <= sunrise || currentTime >= sunset;
+        let localTime = toZonedTime(zuluTime, timezone);
+
+        let sunrise = getSunrise(location[0], location[1], localTime);
+        let sunset = getSunset(location[0], location[1], localTime);
+
+        return localTime <= sunrise || localTime >= sunset;
     };
 
     return (

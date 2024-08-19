@@ -7,6 +7,7 @@ import { Menu, ChevronsUpDown } from "lucide-react";
 import { usePageSettings } from '../contexts/SettingsContext';
 import { WindSpeedUnit, TemperatureUnit, LengthUnit, Theme } from '../lib/types';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { PageSettings } from '../contexts/SettingsContext';
 
 const KeyboardShortcut = ({ action, shortcut }: { action: string; shortcut: string }) => (
     <div className="flex justify-between items-center">
@@ -102,6 +103,7 @@ export function SettingsSheet() {
                             <Switch
                                 id="water-drops"
                                 checked={settings.dataLayers.waterDrops}
+                                disabled={true}
                                 onCheckedChange={handleDataLayerChange('waterDrops')}
                             />
                         </Setting>
@@ -114,12 +116,58 @@ export function SettingsSheet() {
                                 onCheckedChange={(checked) => updateSettings({ watchMode: checked })}
                             />
                         </Setting>
+                        <Setting label="Show Satellite Map">
+                            <Switch
+                                id="show-satellite-map"
+                                checked={settings.showSatelliteMap}
+                                onCheckedChange={(checked) => updateSettings({ showSatelliteMap: checked })}
+                            />
+                        </Setting>
+
+                        <Setting label="Interpolate Aircraft Positions">
+                            <Switch
+                                id="interpolate-aircraft-positions"
+                                checked={settings.interpolateAircraftPositions}
+                                onCheckedChange={(checked) => updateSettings({ interpolateAircraftPositions: checked })}
+                            />
+                        </Setting>
+
                         <Setting label="Show Aircraft Trails">
                             <Switch
                                 id="aircraft-trails"
                                 checked={settings.showAircraftTrails}
                                 onCheckedChange={(checked) => updateSettings({ showAircraftTrails: checked })}
                             />
+                        </Setting>
+                        <Setting label="Fire Sensors">
+                            <Select
+                                value={settings.fireSource}
+                                onValueChange={(value: PageSettings["fireSource"]) => updateSettings({ fireSource: value })}
+                            >
+                                <SelectTrigger id="fire-source" className="w-[120px] ml-auto">
+                                    <SelectValue placeholder="Select fire source" />
+                                </SelectTrigger>
+                                <SelectContent className="z-[1000]">
+                                    <SelectItem value="MODIS and VIIRS">Both</SelectItem>
+                                    <SelectItem value="VIIRS only">VIIRS</SelectItem>
+                                    <SelectItem value="MODIS only">MODIS</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </Setting>
+                        <Setting label="Fire Fade Time">
+                            <Select
+                                value={settings.fireFadeTime.toString()}
+                                onValueChange={(value: string) => updateSettings({ fireFadeTime: parseInt(value) })}
+                            >
+                                <SelectTrigger id="fire-fade-time" className="w-[120px] ml-auto">
+                                    <SelectValue placeholder="Select unit" />
+                                </SelectTrigger>
+                                <SelectContent className="z-[1000]">
+                                    <SelectItem value={(12 * 60 * 60 * 1000).toString()}>12 hours</SelectItem>
+                                    <SelectItem value={(24 * 60 * 60 * 1000).toString()}>24 hours</SelectItem>
+                                    <SelectItem value={(48 * 60 * 60 * 1000).toString()}>48 hours</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </Setting>
                         <Setting label="Theme">
                             <Select

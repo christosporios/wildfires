@@ -19,7 +19,6 @@ async function getMetars(wildfireId: string): Promise<void> {
     while (currentDate <= endDate) {
         const startInterval = new Date(currentDate.getTime() - SIX_HOURS_IN_MS); // 6 hours earlier
         let dateString = format(startInterval, "yyyyMMdd_HHmm");
-        console.log(dateString);
         const url = `https://aviationweather.gov/api/data/metar?ids=${metarAirport}&hours=6&date=${dateString}`;
 
         try {
@@ -31,12 +30,6 @@ async function getMetars(wildfireId: string): Promise<void> {
 
             if (metarsPerHour < 2) {
                 console.warn(`Warning: Only ${metarsPerHour.toFixed(2)} METARs per hour on average for ${format(startInterval, "yyyy-MM-dd HH:mm")} to ${format(currentDate, "yyyy-MM-dd HH:mm")}`);
-            }
-
-            console.log(`Fetched ${metars.length} METARs`);
-            if (metars.length > 0) {
-                console.log(`First METAR: ${metars[0]}`);
-                console.log(`Last METAR: ${metars[metars.length - 1]}`);
             }
 
             metars.forEach((metar: string) => {

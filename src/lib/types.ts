@@ -2,6 +2,10 @@ export interface WildfireData {
     metars: ParsedMetar[];
     flights: { [flightId: string]: Flight };
     wildfire: Wildfire;
+    fires: {
+        viirs: Fire[];
+        modis: Fire[];
+    };
 }
 
 export interface ParsedMetar {
@@ -165,3 +169,28 @@ export type Wildfire = {
     timezone: string;
     metarAirport: string;
 };
+
+export type ThermalAnomaly = {
+    latitude: number;
+    longitude: number;
+    acq_date: string;
+    acq_time: string;
+    version: string;
+    bright_t31: number;
+    daynight: "D" | "N";
+    brightness: number;
+    confidence: string | number;
+    instrument: "VIIRS" | "MODIS";
+    track: number;
+    satellite: string;
+    scan: number;
+    frp: number;
+};
+
+export interface Fire {
+    position: [number, number];
+    timestamp: number;
+    instrument: string;
+    satellite: string;
+    brightness: number;
+}

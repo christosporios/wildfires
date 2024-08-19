@@ -6,13 +6,13 @@ import { usePageSettings } from '../contexts/SettingsContext';
 
 interface WeatherProps {
     metars: ParsedMetar[];
-    currentTime: Date;
+    zuluTime: Date;
 }
 
-const Weather: React.FC<WeatherProps> = ({ metars, currentTime }) => {
+const Weather: React.FC<WeatherProps> = ({ metars, zuluTime }) => {
     const { settings } = usePageSettings();
     const currentMetar = metars
-        .filter(metar => metar.timestamp <= Math.floor(currentTime.getTime() / 1000))
+        .filter(metar => metar.timestamp <= Math.floor(zuluTime.getTime() / 1000))
         .sort((a, b) => b.timestamp - a.timestamp)[0];
     const weather = currentMetar ? new WeatherType(currentMetar) : undefined;
 

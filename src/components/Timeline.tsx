@@ -14,15 +14,19 @@ import {
 import { format, addMinutes, differenceInMinutes, startOfDay, isSameDay, isEqual, addDays, addHours, endOfDay } from 'date-fns';
 import { PauseIcon, PlayIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { formatInTimeZone, fromZonedTime, getTimezoneOffset } from 'date-fns-tz';
 
 interface TimelineProps {
     startDate: Date;
     endDate: Date;
+    timezone: string;
 }
 import { usePageSettings } from '../contexts/SettingsContext';
 
-export default function Timeline({ startDate, endDate, tick }: TimelineProps & { tick: (time: Date) => void }) {
-    const [currentTime, setCurrentTime] = useState(startDate);
+const UPDATE_INTERVAL = 0;
+
+export default function Timeline({ startDate, endDate, tick, timezone }: TimelineProps & { tick: (time: Date) => void }) {
+    const [zuluTime, setZuluTime] = useState(startDate);
     const [isPlaying, setIsPlaying] = useState(false);
     const availableSpeeds = [1, 4, 16, 64, 256, 1024, 4096];
     const totalSeconds = differenceInMinutes(endDate, startDate) * 60;
@@ -49,7 +53,6 @@ export default function Timeline({ startDate, endDate, tick }: TimelineProps & {
             if (event.code === 'KeyQ') {
                 event.preventDefault();
                 const currentIndex = availableSpeeds.indexOf(speed);
-                console.log(`Current speed is ${speed}, current index is ${currentIndex}`);
                 if (currentIndex < availableSpeeds.length - 1) {
                     setSpeed(availableSpeeds[currentIndex + 1]);
                 }
@@ -57,12 +60,10 @@ export default function Timeline({ startDate, endDate, tick }: TimelineProps & {
             if (event.code === 'KeyA') {
                 event.preventDefault();
                 const currentIndex = availableSpeeds.indexOf(speed);
-                console.log(`Current speed is ${speed}, current index is ${currentIndex}`);
                 if (currentIndex > 0) {
                     setSpeed(availableSpeeds[currentIndex - 1]);
                 }
             }
-            console.log(`Available speeds: ${availableSpeeds}`);
         };
 
         window.addEventListener('keydown', handleKeyPress);
@@ -73,15 +74,19 @@ export default function Timeline({ startDate, endDate, tick }: TimelineProps & {
     }, [isPlaying, availableSpeeds]);
 
     const updateTime = (newTime: Date) => {
-        setCurrentTime(newTime);
-        tick(newTime);
+        setZuluTime(newTime);
     };
+
+    let lastUpdateTime = useRef(Date.now());
 
     useEffect(() => {
         if (isPlaying) {
             intervalRef.current = setInterval(() => {
-                setCurrentTime((prevTime) => {
-                    const newTime = addMinutes(prevTime, speed / 600);
+
+                setZuluTime((prevTime) => {
+                    const timeSinceLastUpdate = Date.now() - lastUpdateTime.current;
+                    lastUpdateTime.current = Date.now();
+                    const newTime = addMinutes(prevTime, speed * timeSinceLastUpdate / 60000);
                     if (newTime > endDate) {
                         clearInterval(intervalRef.current!);
                         setIsPlaying(false);
@@ -89,7 +94,7 @@ export default function Timeline({ startDate, endDate, tick }: TimelineProps & {
                     }
                     return newTime;
                 });
-            }, 100);
+            }, UPDATE_INTERVAL);
         } else if (intervalRef.current) {
             clearInterval(intervalRef.current);
         }
@@ -101,14 +106,19 @@ export default function Timeline({ startDate, endDate, tick }: TimelineProps & {
         };
     }, [isPlaying, speed, endDate]);
 
+    let lastTickRef = useRef<number | null>(null);
     useEffect(() => {
-        tick(currentTime);
-    }, [currentTime, tick]);
+        const now = Date.now();
+        if (!lastTickRef.current || now - lastTickRef.current >= UPDATE_INTERVAL / 2) {
+            tick(zuluTime);
+            lastTickRef.current = now;
+        }
+    }, [zuluTime, tick]);
 
     if (settings.watchMode) {
         return (
             <div className="fixed bottom-4 left-4 z-[1000] font-mono text-sm sm:text-base md:text-lg">
-                {format(currentTime, 'HH:mm:ss EEEE, MMMM d')}
+                {formatInTimeZone(zuluTime, timezone, 'HH:mm:ss EEEE, MMMM d')}
             </div>
         );
     }
@@ -138,7 +148,7 @@ export default function Timeline({ startDate, endDate, tick }: TimelineProps & {
                         </div>
 
                         <div className="text-center text-sm sm:text-base md:text-lg flex-grow font-mono">
-                            {format(currentTime, 'HH:mm:ss EEEE, MMMM d')}
+                            {formatInTimeZone(zuluTime, timezone, 'HH:mm:ss EEEE, MMMM d')}
                         </div>
 
                         <div className="min-w-[1rem]">
@@ -148,7 +158,7 @@ export default function Timeline({ startDate, endDate, tick }: TimelineProps & {
                     <TimelineSlider
                         startDate={startDate}
                         endDate={endDate}
-                        currentTime={currentTime}
+                        currentTime={zuluTime}
                         updateTime={updateTime}
                     />
                 </div>
