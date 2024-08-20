@@ -23,7 +23,7 @@ interface TimelineProps {
 }
 import { usePageSettings } from '../contexts/SettingsContext';
 
-const UPDATE_INTERVAL = 0;
+const UPDATE_INTERVAL = 50;
 
 export default function Timeline({ startDate, endDate, tick, timezone }: TimelineProps & { tick: (time: Date) => void }) {
     const [zuluTime, setZuluTime] = useState(startDate);
@@ -76,17 +76,12 @@ export default function Timeline({ startDate, endDate, tick, timezone }: Timelin
     const updateTime = (newTime: Date) => {
         setZuluTime(newTime);
     };
-    let lastUpdateTime = useRef(Date.now());
 
     useEffect(() => {
         if (isPlaying) {
-            lastUpdateTime.current = Date.now(); // Reset lastUpdateTime when starting to play
             intervalRef.current = setInterval(() => {
                 setZuluTime((prevTime) => {
-                    const now = Date.now();
-                    const timeSinceLastUpdate = now - lastUpdateTime.current;
-                    lastUpdateTime.current = now;
-                    const newTime = addMinutes(prevTime, speed * timeSinceLastUpdate / 60000);
+                    const newTime = addMinutes(prevTime, speed * UPDATE_INTERVAL / 60000);
                     if (newTime > endDate) {
                         clearInterval(intervalRef.current!);
                         setIsPlaying(false);
@@ -117,8 +112,9 @@ export default function Timeline({ startDate, endDate, tick, timezone }: Timelin
 
     if (settings.watchMode) {
         return (
-            <div className="fixed bottom-4 left-4 z-[1000] font-mono text-sm sm:text-base md:text-lg">
+            <div key="watch-mode" className="fixed bottom-4 left-4 z-[1000] font-mono text-sm sm:text-base md:text-lg">
                 {formatInTimeZone(zuluTime, timezone, 'HH:mm:ss EEEE, MMMM d')}
+
             </div>
         );
     }

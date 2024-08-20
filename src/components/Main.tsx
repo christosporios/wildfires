@@ -2,7 +2,7 @@
 import { LatLngTuple } from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import Timeline from './Timeline';
-import { Weather as WeatherType, ParsedMetar, WildfireData, Flight } from '../lib/types';
+import { Weather as WeatherType, ParsedMetar, WildfireData, Flight, Fire, AnnouncementsData } from '../lib/types';
 import Weather from './Weather';
 import { SettingsSheet } from './SettingsSheet';
 import { SettingsProvider } from '../contexts/SettingsContext';
@@ -10,6 +10,7 @@ import { usePageSettings } from '../contexts/SettingsContext';
 import dynamic from 'next/dynamic';
 import getWildfireData from '@/lib/getWildfireData';
 import { Loader } from 'lucide-react';
+import { getMetars, getFlights, getFires, getAnnouncements, getWildfire } from '@/lib/getWildfireData';
 
 
 const Fires = dynamic(() => import('./Fires'), {
@@ -37,16 +38,8 @@ export default function Main() {
     const [zuluTime, setZuluTime] = useState(new Date());
     const [wildfireData, setWildfireData] = useState<WildfireData | null>(null);
 
-    useEffect(() => {
-        getWildfireData().then(setWildfireData);
-    }, []);
-
     if (!wildfireData) {
-        return (
-            <div className="h-screen w-screen flex items-center justify-center">
-                <Loader />
-            </div>
-        )
+        return <DataLoader loaded={setWildfireData} />
     }
 
 
@@ -59,6 +52,64 @@ export default function Main() {
             />
         </SettingsProvider>
     )
+}
+function DataLoader({ loaded }: { loaded: (data: WildfireData) => void }) {
+    const [progress, setProgress] = useState(0);
+    const [status, setStatus] = useState<string>("Loading wildfire data...");
+
+    useEffect(() => {
+        async function loadData() {
+            try {
+                setStatus("Loading wildfire data...");
+                const wildfire = await getWildfire();
+                setProgress(20);
+
+                setStatus("Loading flights...");
+                const flights = await getFlights();
+                setProgress(40);
+
+                setStatus("Loading fires...");
+                const fires = await getFires();
+                setProgress(60);
+
+                setStatus("Loading announcements...");
+                const announcements = await getAnnouncements();
+                setProgress(80);
+
+                setStatus("Loading weather...");
+                const metars = await getMetars();
+                setProgress(100);
+
+                setStatus("Done");
+
+                const wildfireData: WildfireData = {
+                    wildfire,
+                    flights,
+                    fires,
+                    announcements,
+                    metars
+                };
+
+                loaded(wildfireData);
+            } catch (error) {
+                console.error("Error loading data:", error);
+                setStatus("Error loading data. Please try again.");
+            }
+        }
+
+        loadData();
+    }, [loaded]);
+
+    return (
+        <div className="h-screen w-screen flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center">
+                <div className="flex flex-col items-center justify-center">
+                    <Loader className="animate-spin mt-4" />
+                    {status}
+                </div>
+            </div>
+        </div>
+    );
 }
 
 function MainContent({

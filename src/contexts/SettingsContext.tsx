@@ -64,11 +64,7 @@ export function SettingsProvider({ children, zuluTime, location, timezone }: { c
     });
 
     useEffect(() => {
-        const updateTheme = () => {
-            setTheme(isDarkMode() ? 'dark' : 'light');
-        };
-
-        updateTheme();
+        setTheme(isDarkMode() ? 'dark' : 'light');
     }, [settings.theme, zuluTime, setTheme]);
 
 

@@ -67,7 +67,7 @@ export function SettingsSheet() {
             </SheetTrigger>
             <SheetContent side="left" className="z-[1000] overflow-y-auto flex flex-col h-full">
                 <SheetHeader>
-                    <SheetTitle>Page Settings</SheetTitle>
+                    <SheetTitle>Varnavas Wildfire 2024</SheetTitle>
                 </SheetHeader>
                 <div className="grid gap-8 py-4 overflow-y-auto">
                     <CollapsibleSection title="Data" defaultOpen={true}>

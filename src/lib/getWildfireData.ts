@@ -7,15 +7,35 @@ import wildfireData from "../../data/varnavas/wildfire.json";
 import fires from "../../data/varnavas/fires.json";
 import announcements from "../../data/varnavas/announcements.json";
 
+export async function getMetars() {
+    return metars as ParsedMetar[];
+}
+
+export async function getFlights() {
+    return flightData as any as { [flightId: string]: Flight };
+}
+
+export async function getWildfire() {
+    return wildfireData as any as Wildfire;
+}
+
+export async function getFires() {
+    return fires as {
+        viirs: Fire[];
+        modis: Fire[];
+    };
+}
+
+export async function getAnnouncements() {
+    return announcements as any as AnnouncementsData;
+}
+
 export default async function getWildfireData() {
     return {
-        metars: metars as ParsedMetar[],
-        flights: flightData as any as { [flightId: string]: Flight },
-        wildfire: wildfireData as any as Wildfire,
-        fires: fires as {
-            viirs: Fire[];
-            modis: Fire[];
-        },
-        announcements: announcements as any as AnnouncementsData
+        metars: await getMetars(),
+        flights: await getFlights(),
+        wildfire: await getWildfire(),
+        fires: await getFires(),
+        announcements: await getAnnouncements()
     };
 }
