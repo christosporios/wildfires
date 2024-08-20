@@ -58,6 +58,17 @@ export function SettingsSheet() {
         updateSettings({ units: { ...settings.units, [key]: value } });
     };
 
+    const fadeTimes = () => {
+        return <>
+            <SelectItem value={(1 * 60 * 60 * 1000).toString()}>1 hour</SelectItem>
+            <SelectItem value={(3 * 60 * 60 * 1000).toString()}>3 hours</SelectItem>
+            <SelectItem value={(6 * 60 * 60 * 1000).toString()}>6 hours</SelectItem>
+            <SelectItem value={(12 * 60 * 60 * 1000).toString()}>12 hours</SelectItem>
+            <SelectItem value={(24 * 60 * 60 * 1000).toString()}>24 hours</SelectItem>
+            <SelectItem value={(48 * 60 * 60 * 1000).toString()}>48 hours</SelectItem>
+        </>
+    }
+
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -139,6 +150,13 @@ export function SettingsSheet() {
                                 onCheckedChange={(checked) => updateSettings({ showAircraftTrails: checked })}
                             />
                         </Setting>
+                        <Setting label="Show Events">
+                            <Switch
+                                id="show-events"
+                                checked={settings.showEvents}
+                                onCheckedChange={(checked) => updateSettings({ showEvents: checked })}
+                            />
+                        </Setting>
                         <Setting label="Fire Sensors">
                             <Select
                                 value={settings.fireSource}
@@ -160,12 +178,23 @@ export function SettingsSheet() {
                                 onValueChange={(value: string) => updateSettings({ fireFadeTime: parseInt(value) })}
                             >
                                 <SelectTrigger id="fire-fade-time" className="w-[120px] ml-auto">
-                                    <SelectValue placeholder="Select unit" />
+                                    <SelectValue placeholder="Select fade time" />
                                 </SelectTrigger>
                                 <SelectContent className="z-[1000]">
-                                    <SelectItem value={(12 * 60 * 60 * 1000).toString()}>12 hours</SelectItem>
-                                    <SelectItem value={(24 * 60 * 60 * 1000).toString()}>24 hours</SelectItem>
-                                    <SelectItem value={(48 * 60 * 60 * 1000).toString()}>48 hours</SelectItem>
+                                    {fadeTimes()}
+                                </SelectContent>
+                            </Select>
+                        </Setting>
+                        <Setting label="Announcements Fade Time">
+                            <Select
+                                value={settings.announcementsFadeTime.toString()}
+                                onValueChange={(value: string) => updateSettings({ announcementsFadeTime: parseInt(value) })}
+                            >
+                                <SelectTrigger id="announcements-fade-time" className="w-[120px] ml-auto">
+                                    <SelectValue placeholder="Select fade time" />
+                                </SelectTrigger>
+                                <SelectContent className="z-[1000]">
+                                    {fadeTimes()}
                                 </SelectContent>
                             </Select>
                         </Setting>

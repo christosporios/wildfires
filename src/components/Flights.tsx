@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flight } from '../lib/types';
-import { Circle, Marker, SVGOverlay, Tooltip } from 'react-leaflet';
+import { Circle, Marker, Polyline, SVGOverlay, Tooltip } from 'react-leaflet';
 import { DivIcon } from 'leaflet';
 import { SettingsSheet } from './SettingsSheet';
 import { Badge } from '@/components/ui/badge';
@@ -59,8 +59,8 @@ export default function Flights({ flightData, zuluTime }: FlightsProps) {
 
                 // Only generate trail if showAircraftTrails is true in settings
                 if (settings.showAircraftTrails) {
-                    // Generate trail for the last 30 minutes, keeping at most one position per 10 seconds
-                    const thirtyMinutesAgo = zuluTime.getTime() - 30 * 60 * 1000;
+                    // Generate trail for the last 15 minutes, keeping at most one position per 10 seconds
+                    const thirtyMinutesAgo = zuluTime.getTime() - 15 * 60 * 1000;
                     let lastTenSeconds = -1;
                     trail = trackPositions.filter(pos => {
                         const posTime = pos.timestamp * 1000;
@@ -85,14 +85,18 @@ export default function Flights({ flightData, zuluTime }: FlightsProps) {
                             identification={flight.data.flight.identification}
                             aircraft={flight.data.flight.aircraft}
                         />
-                        {settings.showAircraftTrails && trail.map((pos, index) => (
-                            <Circle
-                                key={`${flight.data.flight.identification.id}-trail-${index}`}
-                                center={[pos.latitude, pos.longitude]}
-                                radius={2}
-                                pathOptions={{ fillColor: isDarkMode() ? '#fff' : '#000', fillOpacity: 0.5, stroke: false }}
+                        {settings.showAircraftTrails && trail.length > 1 && (
+                            <Polyline
+                                positions={trail.map(pos => [pos.latitude, pos.longitude])}
+                                pathOptions={{
+                                    color: isDarkMode() ? '#fff' : '#000',
+                                    weight: 2,
+                                    opacity: 0.5,
+                                }}
+
+                                smoothFactor={1}
                             />
-                        ))}
+                        )}
                     </React.Fragment>
                 );
             })}

@@ -13,6 +13,9 @@ export interface PageSettings {
     theme: Theme;
     fireSource: 'MODIS and VIIRS' | 'VIIRS only' | 'MODIS only';
     fireFadeTime: number;
+    showEvents: boolean;
+    eventFadeTimeMs: number;
+    announcementsFadeTime: number;
     units: {
         aircraftSpeed: AircraftSpeedUnit;
         windSpeed: WindSpeedUnit;
@@ -47,6 +50,9 @@ export function SettingsProvider({ children, zuluTime, location, timezone }: { c
         fireSource: 'MODIS and VIIRS',
         theme: 'day-night',
         fireFadeTime: 24 * 60 * 60 * 1000,
+        announcementsFadeTime: 3 * 60 * 60 * 1000,
+        showEvents: true,
+        eventFadeTimeMs: 1 * 60 * 60 * 1000,
         units: {
             windSpeed: 'knots',
             temperature: 'celsius',
@@ -57,7 +63,7 @@ export function SettingsProvider({ children, zuluTime, location, timezone }: { c
         dataLayers: {
             fires: true,
             flights: true,
-            evacuationOrders: false,
+            evacuationOrders: true,
             weather: true,
             waterDrops: false,
         },
@@ -88,7 +94,6 @@ export function SettingsProvider({ children, zuluTime, location, timezone }: { c
         if (settings.theme === 'light') return false;
 
         let localTime = toZonedTime(zuluTime, timezone);
-
         let sunrise = getSunrise(location[0], location[1], localTime);
         let sunset = getSunset(location[0], location[1], localTime);
 

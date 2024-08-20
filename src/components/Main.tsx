@@ -11,6 +11,8 @@ import dynamic from 'next/dynamic';
 import getWildfireData from '@/lib/getWildfireData';
 import { Loader } from 'lucide-react';
 import { getMetars, getFlights, getFires, getAnnouncements, getWildfire } from '@/lib/getWildfireData';
+import { Events } from './Events';
+import { Event as WildfireEvent } from '../lib/types';
 
 
 const Fires = dynamic(() => import('./Fires'), {
@@ -37,9 +39,23 @@ const position = [38.2, 23.9] as LatLngTuple;
 export default function Main() {
     const [zuluTime, setZuluTime] = useState(new Date());
     const [wildfireData, setWildfireData] = useState<WildfireData | null>(null);
+    const [events, setEvents] = useState<WildfireEvent[]>([]);
+
+    let onLoaded = (data: WildfireData) => {
+        let events: WildfireEvent[] = data.announcements.announcements.map((announcement) => {
+            return {
+                timestamp: announcement.timestamp,
+                type: "112",
+                description: announcement.type === 'alert' ? `high alert for ${announcement.from.join(', ')}` : `evacuate from ${announcement.from.join(', ')} to ${announcement.to?.join(', ')}`
+            };
+        });
+
+        setEvents(events);
+        setWildfireData(data);
+    }
 
     if (!wildfireData) {
-        return <DataLoader loaded={setWildfireData} />
+        return <DataLoader loaded={onLoaded} />
     }
 
 
@@ -49,6 +65,7 @@ export default function Main() {
                 wildfireData={wildfireData}
                 zuluTime={zuluTime}
                 setZuluTime={setZuluTime}
+                events={events}
             />
         </SettingsProvider>
     )
@@ -116,10 +133,12 @@ function MainContent({
     wildfireData,
     zuluTime,
     setZuluTime,
+    events
 }: {
     wildfireData: WildfireData;
     zuluTime: Date;
     setZuluTime: React.Dispatch<React.SetStateAction<Date>>;
+    events: WildfireEvent[];
 }) {
     const { settings } = usePageSettings();
 
@@ -142,6 +161,7 @@ function MainContent({
             </MapComponent>
             <SettingsSheet />
             <div className="absolute bottom-0 left-0 right-0 z-[1000]">
+                <Events zuluTime={zuluTime} events={events} />
                 <Timeline startDate={new Date(wildfireData.wildfire.start)} endDate={new Date(wildfireData.wildfire.end)} tick={setZuluTime} timezone={wildfireData.wildfire.timezone} />
             </div>
             {

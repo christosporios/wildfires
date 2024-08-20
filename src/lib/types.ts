@@ -214,3 +214,9 @@ export interface AnnouncementsData {
         [areaName: string]: Coordinates;
     };
 }
+
+export interface Event {
+    timestamp: number;
+    type: string;
+    description: string;
+}
