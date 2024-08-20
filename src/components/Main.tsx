@@ -73,7 +73,7 @@ function MainContent({
     const { settings } = usePageSettings();
 
     return (
-        <div className="h-[100dvh] w-full relative">
+        <div className="fixed inset-0 w-full h-full overflow-hidden">
             <MapComponent position={position} zoom={wildfireData.wildfire.zoom}>
                 {settings.dataLayers.flights && (
                     <Flights flightData={wildfireData.flights} zuluTime={zuluTime} />
@@ -93,12 +93,13 @@ function MainContent({
             <div className="absolute bottom-0 left-0 right-0 z-[1000]">
                 <Timeline startDate={new Date(wildfireData.wildfire.start)} endDate={new Date(wildfireData.wildfire.end)} tick={setZuluTime} timezone={wildfireData.wildfire.timezone} />
             </div>
-            {settings.dataLayers.weather && (
-                <div className="absolute top-4 right-4 z-[1000]">
-                    <Weather metars={wildfireData.metars} zuluTime={zuluTime} />
-                </div>
-            )}
-
-        </div>
+            {
+                settings.dataLayers.weather && (
+                    <div className="absolute top-4 right-4 z-[1000]">
+                        <Weather metars={wildfireData.metars} zuluTime={zuluTime} />
+                    </div>
+                )
+            }
+        </div >
     )
 }
