@@ -6,6 +6,7 @@ import wildfireData from "../../data/varnavas/wildfire.json";
 import fires from "../../data/varnavas/fires.json";
 import announcements from "../../data/varnavas/announcements.json";
 
+
 export default function Home() {
   return (
     <Main />
