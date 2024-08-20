@@ -76,16 +76,16 @@ export default function Timeline({ startDate, endDate, tick, timezone }: Timelin
     const updateTime = (newTime: Date) => {
         setZuluTime(newTime);
     };
-
     let lastUpdateTime = useRef(Date.now());
 
     useEffect(() => {
         if (isPlaying) {
+            lastUpdateTime.current = Date.now(); // Reset lastUpdateTime when starting to play
             intervalRef.current = setInterval(() => {
-
                 setZuluTime((prevTime) => {
-                    const timeSinceLastUpdate = Date.now() - lastUpdateTime.current;
-                    lastUpdateTime.current = Date.now();
+                    const now = Date.now();
+                    const timeSinceLastUpdate = now - lastUpdateTime.current;
+                    lastUpdateTime.current = now;
                     const newTime = addMinutes(prevTime, speed * timeSinceLastUpdate / 60000);
                     if (newTime > endDate) {
                         clearInterval(intervalRef.current!);
