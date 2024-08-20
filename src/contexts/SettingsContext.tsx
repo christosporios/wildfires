@@ -46,7 +46,7 @@ export function SettingsProvider({ children, zuluTime, location, timezone }: { c
         interpolateAircraftPositions: true,
         fireSource: 'MODIS and VIIRS',
         theme: 'day-night',
-        fireFadeTime: 12 * 60 * 60 * 1000,
+        fireFadeTime: 24 * 60 * 60 * 1000,
         units: {
             windSpeed: 'knots',
             temperature: 'celsius',
