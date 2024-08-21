@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Fire as FireType } from '../lib/types';
+import { Fire as FireType } from '../../lib/types';
 import { LatLngTuple } from 'leaflet';
 import { Circle } from 'react-leaflet';
 import { usePageSettings } from '@/contexts/SettingsContext';

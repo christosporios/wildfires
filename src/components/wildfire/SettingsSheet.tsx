@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Menu, ChevronsUpDown } from "lucide-react";
-import { usePageSettings } from '../contexts/SettingsContext';
-import { WindSpeedUnit, TemperatureUnit, LengthUnit, Theme } from '../lib/types';
+import { Menu, ChevronsUpDown, Radio } from "lucide-react";
+import { usePageSettings } from '../../contexts/SettingsContext';
+import { WindSpeedUnit, TemperatureUnit, LengthUnit, Theme, Wildfire } from '../../lib/types';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { PageSettings } from '../contexts/SettingsContext';
+import { PageSettings } from '../../contexts/SettingsContext';
+import { format } from 'date-fns-tz'
 
 const KeyboardShortcut = ({ action, shortcut }: { action: string; shortcut: string }) => (
     <div className="flex justify-between items-center">
@@ -47,7 +48,7 @@ const CollapsibleSection = ({ title, children, defaultOpen = false }: { title: s
     );
 };
 
-export function SettingsSheet() {
+export function SettingsSheet({ wildfire }: { wildfire: Wildfire }) {
     const { settings, updateSettings } = usePageSettings();
 
     const handleDataLayerChange = (key: keyof typeof settings.dataLayers) => (checked: boolean) => {
@@ -78,8 +79,15 @@ export function SettingsSheet() {
             </SheetTrigger>
             <SheetContent side="left" className="z-[1000] overflow-y-auto flex flex-col h-full">
                 <SheetHeader>
-                    <SheetTitle>Varnavas Wildfire 2024</SheetTitle>
+                    <SheetTitle>{wildfire.name}</SheetTitle>
                 </SheetHeader>
+                <SheetDescription>
+                    <p>
+                        {wildfire.end
+                            ? `${format(new Date(wildfire.start), 'MMMM d', { timeZone: wildfire.timezone })} - ${format(new Date(wildfire.end), 'MMMM d, yyyy', { timeZone: wildfire.timezone })}`
+                            : <> <Radio className="w-4 h-4 animate-pulse inline-block" /> started on {format(new Date(wildfire.start), 'MMMM d', { timeZone: wildfire.timezone })}</>}
+                    </p>
+                </SheetDescription>
                 <div className="grid gap-8 py-4 overflow-y-auto">
                     <CollapsibleSection title="Data" defaultOpen={true}>
                         <Setting label="Fires" description="NASA FIRMS">
@@ -96,7 +104,7 @@ export function SettingsSheet() {
                                 onCheckedChange={handleDataLayerChange('flights')}
                             />
                         </Setting>
-                        <Setting label="Civil Protection Announcements" description="112 (twitter)">
+                        <Setting label="112 announcements" description="112 (twitter)">
                             <Switch
                                 id="evacuation"
                                 checked={settings.dataLayers.evacuationOrders}

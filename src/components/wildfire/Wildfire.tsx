@@ -2,17 +2,17 @@
 import { LatLngTuple } from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import Timeline from './Timeline';
-import { Weather as WeatherType, ParsedMetar, WildfireData, Flight, Fire, AnnouncementsData } from '../lib/types';
+import { Weather as WeatherType, ParsedMetar, WildfireData, Flight, Fire, AnnouncementsData } from '../../lib/types';
 import Weather from './Weather';
 import { SettingsSheet } from './SettingsSheet';
-import { SettingsProvider } from '../contexts/SettingsContext';
-import { usePageSettings } from '../contexts/SettingsContext';
+import { SettingsProvider } from '../../contexts/SettingsContext';
+import { usePageSettings } from '../../contexts/SettingsContext';
 import dynamic from 'next/dynamic';
 import getWildfireData from '@/lib/getWildfireData';
 import { Loader } from 'lucide-react';
 import { getMetars, getFlights, getFires, getAnnouncements, getWildfire } from '@/lib/getWildfireData';
 import { Events } from './Events';
-import { Event as WildfireEvent } from '../lib/types';
+import { Event as WildfireEvent } from '../../lib/types';
 
 
 const Fires = dynamic(() => import('./Fires'), {
@@ -25,7 +25,7 @@ const Flights = dynamic(() => import('./Flights'), {
     loading: () => <p>Loading flights...</p>
 });
 
-const MapComponent = dynamic(() => import('./Map'), {
+const MapComponent = dynamic(() => import('../map/Map'), {
     ssr: false,
     loading: () => <p>Loading map...</p>
 });
@@ -159,10 +159,10 @@ function MainContent({
                     </div>
                 )}
             </MapComponent>
-            <SettingsSheet />
+            <SettingsSheet wildfire={wildfireData.wildfire} />
             <div className="absolute bottom-0 left-0 right-0 z-[1000]">
                 <Events zuluTime={zuluTime} events={events} />
-                <Timeline startDate={new Date(wildfireData.wildfire.start)} endDate={new Date(wildfireData.wildfire.end)} tick={setZuluTime} timezone={wildfireData.wildfire.timezone} />
+                <Timeline startDate={new Date(wildfireData.wildfire.start)} endDate={wildfireData.wildfire.end ? new Date(wildfireData.wildfire.end) : new Date()} tick={setZuluTime} timezone={wildfireData.wildfire.timezone} />
             </div>
             {
                 settings.dataLayers.weather && (

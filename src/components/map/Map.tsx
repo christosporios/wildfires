@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer } from 'react-leaflet'
 import { LatLngTuple } from 'leaflet';
 import { useState, useEffect } from 'react';
-import { usePageSettings } from '../contexts/SettingsContext';
+import { usePageSettings } from '../../contexts/SettingsContext';
 
 interface MapComponentProps {
     position: LatLngTuple;

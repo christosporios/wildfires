@@ -1,9 +1,9 @@
 import React from 'react';
-import { AnnouncementsData } from '../lib/types';
+import { AnnouncementsData } from '../../lib/types';
 import { Marker, Polyline, SVGOverlay, Tooltip } from 'react-leaflet';
 import { Circle } from 'react-leaflet';
 import { usePageSettings } from '@/contexts/SettingsContext';
-import ArrowheadsPolyline from './ArrowheadsPolyline';
+import ArrowheadsPolyline from '../map/ArrowheadsPolyline';
 
 interface AnnouncementsProps {
     announcements: AnnouncementsData;

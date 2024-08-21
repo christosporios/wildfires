@@ -1,5 +1,4 @@
 "use server";
-import Main from "@/components/Main";
 import metars from "../../data/varnavas/metars.json";
 import { ParsedMetar, Flight, Wildfire, Fire, AnnouncementsData } from "@/lib/types";
 import flightData from "../../data/varnavas/flights.json";

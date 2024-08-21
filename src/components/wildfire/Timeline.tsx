@@ -21,7 +21,7 @@ interface TimelineProps {
     endDate: Date;
     timezone: string;
 }
-import { usePageSettings } from '../contexts/SettingsContext';
+import { usePageSettings } from '../../contexts/SettingsContext';
 
 const UPDATE_INTERVAL = 50;
 
@@ -229,10 +229,12 @@ function TimelineSlider({ startDate, endDate, currentTime, updateTime }: Timelin
         };
     }, [isDragging]);
 
+    const totalDays = differenceInMinutes(endDate, startDate) / (60 * 24);
     const generateTimeMarkers = () => {
         const markers = [];
         let currentMarker = startOfDay(startDate);
         const endMarker = endDate;
+        const interval = totalDays > 5 ? 3 : 1;
 
         while (currentMarker <= endMarker) {
             const position = (differenceInMinutes(currentMarker, startDate) / totalMinutes) * 100;
@@ -245,7 +247,7 @@ function TimelineSlider({ startDate, endDate, currentTime, updateTime }: Timelin
                     </div>
                 );
             }
-            currentMarker = addHours(currentMarker, 1);
+            currentMarker = addHours(currentMarker, interval);
         }
 
         return markers;
@@ -255,6 +257,7 @@ function TimelineSlider({ startDate, endDate, currentTime, updateTime }: Timelin
         const labels = [];
         let currentDay = startDate;
         const endDay = endOfDay(endDate);
+        const totalDays = differenceInMinutes(endDate, startDate) / (60 * 24);
 
         while (currentDay <= endDay) {
             const startPosition = (differenceInMinutes(currentDay, startDate) / totalMinutes) * 100;
@@ -266,7 +269,7 @@ function TimelineSlider({ startDate, endDate, currentTime, updateTime }: Timelin
                 <div key={currentDay.getTime()} className="absolute" style={{ left: `${startPosition}%`, width: `${width}%`, minWidth: '100px' }}>
                     <div className="text-center text-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
                         <span className="sm:hidden">{format(currentDay, 'dd/MM')}</span>
-                        <span className="hidden sm:inline">{format(currentDay, 'EEEE, MMMM d')}</span>
+                        <span className="hidden sm:inline">{totalDays > 5 ? format(currentDay, 'MMM d') : format(currentDay, 'EEEE, MMMM d')}</span>
                     </div>
                 </div>
             );
@@ -281,6 +284,8 @@ function TimelineSlider({ startDate, endDate, currentTime, updateTime }: Timelin
         const labels = [];
         let currentHour = startOfDay(startDate);
         const endHour = endDate;
+        const largeScreenInterval = totalDays > 5 ? 6 : 2;
+        const smallScreenInterval = totalDays > 5 ? 12 : 6;
 
         while (currentHour <= endHour) {
             const position = (differenceInMinutes(currentHour, startDate) / totalMinutes) * 100;
@@ -289,9 +294,9 @@ function TimelineSlider({ startDate, endDate, currentTime, updateTime }: Timelin
             if (position >= 0 && position <= 100) {
                 labels.push(
                     <div key={currentHour.getTime()} className="absolute text-xs text-muted-foreground" style={{ left: `${position}%`, transform: 'translateX(-50%)' }}>
-                        <span className="hidden sm:inline md:hidden">{hour % 6 === 0 ? hour : ''}</span>
-                        <span className="hidden md:inline lg:hidden">{hour % 3 === 0 ? hour : ''}</span>
-                        <span className="hidden lg:inline">{hour % 2 === 0 ? hour : ''}</span>
+                        <span className="hidden sm:inline md:hidden">{hour % smallScreenInterval === 0 ? hour : ''}</span>
+                        <span className="hidden md:inline lg:hidden">{hour % (smallScreenInterval / 2) === 0 ? hour : ''}</span>
+                        <span className="hidden lg:inline">{hour % largeScreenInterval === 0 ? hour : ''}</span>
                     </div>
                 );
             }

@@ -1,6 +1,6 @@
 import { usePageSettings } from "@/contexts/SettingsContext";
 import { Event as WildfireEvent } from "@/lib/types";
-import { Badge } from "./ui/badge";
+import { Badge } from "../ui/badge";
 
 export function Events({ zuluTime, events }: { zuluTime: Date, events: WildfireEvent[] }) {
     let { settings } = usePageSettings();

@@ -161,12 +161,12 @@ export type Theme = 'day-night' | 'dark' | 'light';
 
 export type Wildfire = {
     id: string;
-    year: number;
+    name: string;
     boundingBox: [[number, number], [number, number]];
     position: [number, number];
     zoom: number;
     start: string;
-    end: string;
+    end?: string; // undefined for live wildfires
     timezone: string;
     metarAirport: string;
 };

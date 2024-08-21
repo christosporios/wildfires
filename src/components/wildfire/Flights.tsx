@@ -1,10 +1,10 @@
 import React from 'react';
-import { Flight } from '../lib/types';
+import { Flight } from '../../lib/types';
 import { Circle, Marker, Polyline, SVGOverlay, Tooltip } from 'react-leaflet';
 import { DivIcon } from 'leaflet';
 import { SettingsSheet } from './SettingsSheet';
 import { Badge } from '@/components/ui/badge';
-import { usePageSettings } from '../contexts/SettingsContext';
+import { usePageSettings } from '../../contexts/SettingsContext';
 interface FlightsProps {
     flightData: { [flightId: string]: Flight };
     zuluTime: Date;

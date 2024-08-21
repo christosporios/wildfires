@@ -10,7 +10,7 @@ async function getMetars(wildfireId: string): Promise<void> {
     const wildfire: Wildfire = JSON.parse(fs.readFileSync(wildfireDataPath, 'utf-8'));
 
     const startDate = new Date(wildfire.start);
-    const endDate = new Date(wildfire.end);
+    const endDate = wildfire.end ? new Date(wildfire.end) : new Date();
     const metarAirport = wildfire.metarAirport;
 
     let currentDate = new Date(startDate);

@@ -1,8 +1,8 @@
 import React from 'react';
-import { ParsedMetar } from '../lib/types';
-import { Weather as WeatherType } from '../lib/types';
+import { ParsedMetar } from '../../lib/types';
+import { Weather as WeatherType } from '../../lib/types';
 import { Card, CardContent } from "@/components/ui/card";
-import { usePageSettings } from '../contexts/SettingsContext';
+import { usePageSettings } from '../../contexts/SettingsContext';
 
 interface WeatherProps {
     metars: ParsedMetar[];
