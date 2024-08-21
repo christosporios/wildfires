@@ -4,7 +4,7 @@ import { ThermalAnomaly } from '../src/lib/types';
 import { Fire } from '../src/lib/types';
 
 async function getFires(wildfireId: string): Promise<void> {
-    const inputDir = path.join('./data', wildfireId, 'inputs');
+    const inputDir = path.join('./data', wildfireId, 'inputs', 'firms');
     const outputPath = path.join('./data', wildfireId, 'fires.json');
 
     const fires: { viirs: Fire[], modis: Fire[] } = { viirs: [], modis: [] };
@@ -49,7 +49,7 @@ async function getFires(wildfireId: string): Promise<void> {
 function getTimestamp(date: string, time: string): number {
     const [year, month, day] = date.split('-').map(Number);
     const [hour, minute] = time.padStart(4, '0').split(/(.{2})/).filter(Boolean).map(Number);
-    return Math.floor(new Date(year, month - 1, day, hour, minute).getTime() / 1000);
+    return Math.floor(Date.UTC(year, month - 1, day, hour, minute) / 1000);
 }
 
 // Usage
