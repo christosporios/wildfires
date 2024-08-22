@@ -1,19 +1,16 @@
 "use client";
 import { LatLngTuple } from 'leaflet';
 import React, { useEffect, useState } from 'react';
-import Timeline from './Timeline';
+import Timeline from '../wildfire/Timeline';
 import { Weather as WeatherType, ParsedMetar, WildfireData, Flight, Fire, AnnouncementsData } from '../../lib/types';
-import Weather from './Weather';
-import { SettingsSheet } from './SettingsSheet';
-import { SettingsProvider } from '../../contexts/SettingsContext';
+import Weather from '../wildfire/Weather';
+import { SettingsSheet } from '../wildfire/SettingsSheet';
+import { LocalizedSettingsProvider as SettingsProvider } from '../../contexts/SettingsContext';
 import { usePageSettings } from '../../contexts/SettingsContext';
 import dynamic from 'next/dynamic';
-import getWildfireData from '@/lib/getWildfireData';
-import { Loader } from 'lucide-react';
-import { getMetars, getFlights, getFires, getAnnouncements, getWildfire } from '@/lib/getWildfireData';
-import { Events } from './Events';
+import { Events } from '../wildfire/Events';
 import { Event as WildfireEvent } from '../../lib/types';
-
+import DataLoader from '../wildfire/DataLoader';
 
 const Fires = dynamic(() => import('./Fires'), {
     ssr: false,
@@ -25,7 +22,7 @@ const Flights = dynamic(() => import('./Flights'), {
     loading: () => <p>Loading flights...</p>
 });
 
-const MapComponent = dynamic(() => import('../map/Map'), {
+const MapComponent = dynamic(() => import('./Map'), {
     ssr: false,
     loading: () => <p>Loading map...</p>
 });
@@ -35,8 +32,7 @@ const Announcements = dynamic(() => import('./Announcements'), {
     loading: () => <p>Loading announcements...</p>
 });
 
-const position = [38.2, 23.9] as LatLngTuple;
-export default function Main() {
+export default function Wildfire({ wildfireId }: { wildfireId: string }) {
     const [zuluTime, setZuluTime] = useState(new Date());
     const [wildfireData, setWildfireData] = useState<WildfireData | null>(null);
     const [events, setEvents] = useState<WildfireEvent[]>([]);
@@ -55,9 +51,8 @@ export default function Main() {
     }
 
     if (!wildfireData) {
-        return <DataLoader loaded={onLoaded} />
+        return <DataLoader loaded={onLoaded} wildfireId={wildfireId} />
     }
-
 
     return (
         <SettingsProvider zuluTime={zuluTime} location={wildfireData.wildfire.position} timezone={wildfireData.wildfire.timezone}>
@@ -69,64 +64,6 @@ export default function Main() {
             />
         </SettingsProvider>
     )
-}
-function DataLoader({ loaded }: { loaded: (data: WildfireData) => void }) {
-    const [progress, setProgress] = useState(0);
-    const [status, setStatus] = useState<string>("Loading wildfire data...");
-
-    useEffect(() => {
-        async function loadData() {
-            try {
-                setStatus("Loading wildfire data...");
-                const wildfire = await getWildfire();
-                setProgress(20);
-
-                setStatus("Loading flights...");
-                const flights = await getFlights();
-                setProgress(40);
-
-                setStatus("Loading fires...");
-                const fires = await getFires();
-                setProgress(60);
-
-                setStatus("Loading announcements...");
-                const announcements = await getAnnouncements();
-                setProgress(80);
-
-                setStatus("Loading weather...");
-                const metars = await getMetars();
-                setProgress(100);
-
-                setStatus("Done");
-
-                const wildfireData: WildfireData = {
-                    wildfire,
-                    flights,
-                    fires,
-                    announcements,
-                    metars
-                };
-
-                loaded(wildfireData);
-            } catch (error) {
-                console.error("Error loading data:", error);
-                setStatus("Error loading data. Please try again.");
-            }
-        }
-
-        loadData();
-    }, [loaded]);
-
-    return (
-        <div className="h-screen w-screen flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center">
-                <div className="flex flex-col items-center justify-center">
-                    <Loader className="animate-spin mt-4" />
-                    {status}
-                </div>
-            </div>
-        </div>
-    );
 }
 
 function MainContent({
@@ -144,7 +81,7 @@ function MainContent({
 
     return (
         <div className="fixed inset-0 w-full h-full overflow-hidden">
-            <MapComponent position={position} zoom={wildfireData.wildfire.zoom}>
+            <MapComponent position={wildfireData.wildfire.position} zoom={wildfireData.wildfire.zoom}>
                 {settings.dataLayers.flights && (
                     <Flights flightData={wildfireData.flights} zuluTime={zuluTime} />
                 )}

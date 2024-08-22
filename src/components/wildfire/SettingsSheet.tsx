@@ -9,6 +9,7 @@ import { WindSpeedUnit, TemperatureUnit, LengthUnit, Theme, Wildfire } from '../
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { PageSettings } from '../../contexts/SettingsContext';
 import { format } from 'date-fns-tz'
+import WildfireDescription from '../utils/WildfireDescription';
 
 const KeyboardShortcut = ({ action, shortcut }: { action: string; shortcut: string }) => (
     <div className="flex justify-between items-center">
@@ -83,9 +84,7 @@ export function SettingsSheet({ wildfire }: { wildfire: Wildfire }) {
                 </SheetHeader>
                 <SheetDescription>
                     <p>
-                        {wildfire.end
-                            ? `${format(new Date(wildfire.start), 'MMMM d', { timeZone: wildfire.timezone })} - ${format(new Date(wildfire.end), 'MMMM d, yyyy', { timeZone: wildfire.timezone })}`
-                            : <> <Radio className="w-4 h-4 animate-pulse inline-block" /> started on {format(new Date(wildfire.start), 'MMMM d', { timeZone: wildfire.timezone })}</>}
+                        <WildfireDescription wildfire={wildfire} />
                     </p>
                 </SheetDescription>
                 <div className="grid gap-8 py-4 overflow-y-auto">

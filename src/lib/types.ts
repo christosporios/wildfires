@@ -9,6 +9,14 @@ export interface WildfireData {
     announcements: AnnouncementsData;
 }
 
+export interface WildfireSummary {
+    wildfire: Wildfire;
+    fires: {
+        viirs: Fire[];
+        modis: Fire[];
+    };
+}
+
 export interface ParsedMetar {
     icaoId: string;
     raw: string;

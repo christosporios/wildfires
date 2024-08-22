@@ -4,7 +4,6 @@ import { useTheme } from "next-themes"
 import { getSunrise, getSunset } from "sunrise-sunset-js";
 import { toZonedTime } from 'date-fns-tz';
 
-
 export interface PageSettings {
     watchMode: boolean;
     showAircraftTrails: boolean;
@@ -40,56 +39,82 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
-export function SettingsProvider({ children, zuluTime, location, timezone }: { children: React.ReactNode, zuluTime: Date, location: [number, number], timezone: string }) {
-    const { setTheme } = useTheme();
-    const [settings, setSettings] = useState<PageSettings>({
-        watchMode: false,
-        showAircraftTrails: true,
-        showSatelliteMap: false,
-        interpolateAircraftPositions: true,
-        fireSource: 'MODIS and VIIRS',
-        theme: 'day-night',
-        fireFadeTime: 24 * 60 * 60 * 1000,
-        announcementsFadeTime: 3 * 60 * 60 * 1000,
-        showEvents: true,
-        eventFadeTimeMs: 1 * 60 * 60 * 1000,
-        units: {
-            windSpeed: 'knots',
-            temperature: 'celsius',
-            altitude: 'meters',
-            height: 'meters',
-            aircraftSpeed: 'knots',
-        },
-        dataLayers: {
-            fires: true,
-            flights: true,
-            evacuationOrders: true,
-            weather: true,
-            waterDrops: false,
-        },
-    });
+const defaultSettings: PageSettings = {
+    watchMode: false,
+    showAircraftTrails: true,
+    showSatelliteMap: false,
+    interpolateAircraftPositions: true,
+    fireSource: 'MODIS and VIIRS',
+    theme: 'day-night',
+    fireFadeTime: 24 * 60 * 60 * 1000,
+    announcementsFadeTime: 3 * 60 * 60 * 1000,
+    showEvents: true,
+    eventFadeTimeMs: 1 * 60 * 60 * 1000,
+    units: {
+        windSpeed: 'knots',
+        temperature: 'celsius',
+        altitude: 'meters',
+        height: 'meters',
+        aircraftSpeed: 'knots',
+    },
+    dataLayers: {
+        fires: true,
+        flights: true,
+        evacuationOrders: true,
+        weather: true,
+        waterDrops: false,
+    },
+};
 
-    useEffect(() => {
-        setTheme(isDarkMode() ? 'dark' : 'light');
-    }, [settings.theme, zuluTime, setTheme]);
-
-
-    useEffect(() => {
-        const handleKeyPress = (event: KeyboardEvent) => {
-            if (event.key.toLowerCase() === 'w') {
-                setSettings(prev => ({ ...prev, watchMode: !prev.watchMode }));
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyPress);
-        return () => window.removeEventListener('keydown', handleKeyPress);
-    }, []);
+function useSettingsProvider(initialSettings: PageSettings) {
+    const { theme, setTheme } = useTheme();
+    const [settings, setSettings] = useState<PageSettings>(initialSettings);
 
     const updateSettings = (newSettings: Partial<PageSettings>) => {
         setSettings(prev => ({ ...prev, ...newSettings }));
     };
 
     const isDarkMode = () => {
+        if (settings.theme === 'dark') return true;
+        if (settings.theme === 'light') return false;
+
+        return theme === 'dark';
+    };
+
+    useEffect(() => {
+        if (setTheme) {
+            setTheme(isDarkMode() ? 'dark' : 'light');
+        }
+    }, [settings.theme, setTheme]);
+
+    return { settings, updateSettings, isDarkMode };
+}
+
+export function BaseSettingsProvider({ children }: { children: React.ReactNode }) {
+    const { settings, updateSettings, isDarkMode } = useSettingsProvider(defaultSettings);
+
+    return (
+        <SettingsContext.Provider value={{ settings, updateSettings, isDarkMode }}>
+            {children}
+        </SettingsContext.Provider>
+    );
+}
+
+export function LocalizedSettingsProvider({ children, zuluTime, location, timezone }: { children: React.ReactNode, zuluTime: Date, location: [number, number], timezone: string }) {
+    const { settings, updateSettings, isDarkMode } = useSettingsProvider(defaultSettings);
+
+    useEffect(() => {
+        const handleKeyPress = (event: KeyboardEvent) => {
+            if (event.key.toLowerCase() === 'w') {
+                updateSettings({ watchMode: !settings.watchMode });
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, [settings.watchMode, updateSettings]);
+
+    const localizedIsDarkMode = () => {
         if (settings.theme === 'dark') return true;
         if (settings.theme === 'light') return false;
 
@@ -101,7 +126,7 @@ export function SettingsProvider({ children, zuluTime, location, timezone }: { c
     };
 
     return (
-        <SettingsContext.Provider value={{ settings, updateSettings, isDarkMode }}>
+        <SettingsContext.Provider value={{ settings, updateSettings, isDarkMode: localizedIsDarkMode }}>
             {children}
         </SettingsContext.Provider>
     );
