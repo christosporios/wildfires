@@ -101,7 +101,12 @@ export function BaseSettingsProvider({ children }: { children: React.ReactNode }
 }
 
 export function LocalizedSettingsProvider({ children, zuluTime, location, timezone }: { children: React.ReactNode, zuluTime: Date, location: [number, number], timezone: string }) {
-    const { settings, updateSettings, isDarkMode } = useSettingsProvider(defaultSettings);
+    const { theme, setTheme } = useTheme();
+    const [settings, setSettings] = useState<PageSettings>(defaultSettings);
+
+    const updateSettings = (newSettings: Partial<PageSettings>) => {
+        setSettings(prev => ({ ...prev, ...newSettings }));
+    };
 
     useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
@@ -112,7 +117,7 @@ export function LocalizedSettingsProvider({ children, zuluTime, location, timezo
 
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
-    }, [settings.watchMode, updateSettings]);
+    }, [settings.watchMode]);
 
     const localizedIsDarkMode = () => {
         if (settings.theme === 'dark') return true;
@@ -124,6 +129,20 @@ export function LocalizedSettingsProvider({ children, zuluTime, location, timezo
 
         return localTime <= sunrise || localTime >= sunset;
     };
+
+    useEffect(() => {
+        const updateTheme = () => {
+            const isDark = localizedIsDarkMode();
+            setTheme(isDark ? 'dark' : 'light');
+        };
+
+        updateTheme();
+
+        // Set up an interval to check and update the theme every minute
+        const intervalId = setInterval(updateTheme, 60000);
+
+        return () => clearInterval(intervalId);
+    }, [zuluTime, location, timezone, settings.theme, setTheme]);
 
     return (
         <SettingsContext.Provider value={{ settings, updateSettings, isDarkMode: localizedIsDarkMode }}>

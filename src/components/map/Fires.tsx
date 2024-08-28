@@ -5,10 +5,7 @@ import { Circle } from 'react-leaflet';
 import { usePageSettings } from '@/contexts/SettingsContext';
 
 interface FiresProps {
-    fires: {
-        viirs: FireType[];
-        modis: FireType[];
-    };
+    fires: FireType[];
     zuluTime: Date;
 }
 
@@ -17,19 +14,12 @@ const Fires: React.FC<FiresProps> = ({ fires, zuluTime }: FiresProps) => {
 
     let selectedFires: FireType[] = [];
     if (settings.fireSource == 'MODIS and VIIRS') {
-        selectedFires = fires.viirs.concat(fires.modis);
+        selectedFires = fires;
     } else if (settings.fireSource == 'VIIRS only') {
-        selectedFires = fires.viirs;
+        selectedFires = fires.filter((f) => f.instrument === "VIIRS")
     } else if (settings.fireSource == 'MODIS only') {
-        selectedFires = fires.modis;
+        selectedFires = fires.filter((f) => f.instrument === "MODIS")
     }
-
-    let [lowestBrightness, setLowestBrightness] = useState(() => {
-        return Math.min(...selectedFires.map(fire => fire.brightness));
-    });
-    let [highestBrightness, setHighestBrightness] = useState(() => {
-        return Math.max(...selectedFires.map(fire => fire.brightness));
-    });
 
     const fadeTime = settings.fireFadeTime;
 
@@ -46,17 +36,14 @@ const Fires: React.FC<FiresProps> = ({ fires, zuluTime }: FiresProps) => {
                     key={`${fire.timestamp}-${fire.position.join(',')}`}
                     fire={fire}
                     fadePercent={(zuluTime.getTime() - fire.timestamp * 1000) / fadeTime}
-                    brightnessPercent={(fire.brightness - lowestBrightness) / (highestBrightness - lowestBrightness)}
                 />
             ))}
         </>
     );
 };
 
-function Fire({ fire, fadePercent, brightnessPercent }: { fire: FireType, fadePercent: number, brightnessPercent: number }) {
-    const minRadius = 10;
-    const maxRadius = 100;
-    const radius = minRadius + (maxRadius - minRadius) * brightnessPercent;
+function Fire({ fire, fadePercent }: { fire: FireType, fadePercent: number }) {
+    const radius = 50;
     return (
         <Circle
             center={fire.position as LatLngTuple}

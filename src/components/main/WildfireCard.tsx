@@ -9,11 +9,11 @@ import WildfireDescription from "../utils/WildfireDescription";
 
 const MiniMap = dynamic(() => import("../map/MiniMap"), { ssr: false });
 
-export default function WildfireCard({ wildfire }: { wildfire: WildfireSummary }) {
+export default function WildfireCard({ wildfire }: { wildfire: Wildfire }) {
     const [isHover, setIsHover] = useState(false);
 
     return (
-        <Link href={`/${wildfire.wildfire.id}`} className="w-80 h-96 block">
+        <Link href={`/${wildfire.id}`} className="w-80 h-96 block">
             <Card
                 className="w-full h-96 relative group drop-shadow-sm hover:drop-shadow-xl font-bold"
 
@@ -27,10 +27,10 @@ export default function WildfireCard({ wildfire }: { wildfire: WildfireSummary }
                 </div>
                 <div className="relative z-10 bg-opacity-100">
                     <CardHeader>
-                        <CardTitle className='font-normal text-center'>{wildfire.wildfire.name}</CardTitle>
+                        <CardTitle className='font-normal text-center'>{wildfire.name}</CardTitle>
                     </CardHeader>
                     <CardDescription className="text-center">
-                        <WildfireDescription wildfire={wildfire.wildfire} />
+                        <WildfireDescription wildfire={wildfire} />
                     </CardDescription>
                     <CardContent>
                     </CardContent>

@@ -1,19 +1,30 @@
 import React from 'react';
-import { ParsedMetar } from '../../lib/types';
+import { Metar } from '../../lib/types';
 import { Weather as WeatherType } from '../../lib/types';
 import { Card, CardContent } from "@/components/ui/card";
 import { usePageSettings } from '../../contexts/SettingsContext';
 
 interface WeatherProps {
-    metars: ParsedMetar[];
+    metars: Metar[];
     zuluTime: Date;
 }
 
 const Weather: React.FC<WeatherProps> = ({ metars, zuluTime }) => {
     const { settings } = usePageSettings();
-    const currentMetar = metars
+    let currentMetar = metars
         .filter(metar => metar.timestamp <= Math.floor(zuluTime.getTime() / 1000))
         .sort((a, b) => b.timestamp - a.timestamp)[0];
+
+    if (!currentMetar) {
+        const nextHour = new Date(zuluTime.getTime() + 60 * 60 * 1000);
+        const nearestFutureMetar = metars
+            .filter(metar => metar.timestamp > Math.floor(zuluTime.getTime() / 1000) && metar.timestamp <= Math.floor(nextHour.getTime() / 1000))
+            .sort((a, b) => a.timestamp - b.timestamp)[0];
+
+        if (nearestFutureMetar) {
+            currentMetar = nearestFutureMetar;
+        }
+    }
     const weather = currentMetar ? new WeatherType(currentMetar) : undefined;
 
     if (!weather) {

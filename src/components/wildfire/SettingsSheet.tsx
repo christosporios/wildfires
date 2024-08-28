@@ -10,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { PageSettings } from '../../contexts/SettingsContext';
 import { format } from 'date-fns-tz'
 import WildfireDescription from '../utils/WildfireDescription';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '../ui/breadcrumb';
 
 const KeyboardShortcut = ({ action, shortcut }: { action: string; shortcut: string }) => (
     <div className="flex justify-between items-center">
@@ -80,9 +81,21 @@ export function SettingsSheet({ wildfire }: { wildfire: Wildfire }) {
             </SheetTrigger>
             <SheetContent side="left" className="z-[1000] overflow-y-auto flex flex-col h-full">
                 <SheetHeader>
-                    <SheetTitle>{wildfire.name}</SheetTitle>
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem>
+                                <BreadcrumbLink href="/">Wildfires</BreadcrumbLink>
+                            </BreadcrumbItem>
+                            <BreadcrumbSeparator />
+
+                            <BreadcrumbItem>
+                                <SheetTitle>{wildfire.name}</SheetTitle>
+                            </BreadcrumbItem>
+                        </BreadcrumbList>
+                    </Breadcrumb>
                 </SheetHeader>
                 <SheetDescription>
+
                     <p>
                         <WildfireDescription wildfire={wildfire} />
                     </p>
@@ -306,6 +319,6 @@ export function SettingsSheet({ wildfire }: { wildfire: Wildfire }) {
                     <p><a href="https://twitter.com/christosporios" target="_blank" rel="noopener noreferrer" className="underline">@christosporios</a></p>
                 </footer>
             </SheetContent>
-        </Sheet>
+        </Sheet >
     );
 }

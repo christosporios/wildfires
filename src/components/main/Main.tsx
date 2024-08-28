@@ -1,12 +1,27 @@
 "use client";
-import { WildfireSummary } from "@/lib/types";
+import { Wildfire, WildfireSummary } from "@/lib/types";
 import WildfireCard from "./WildfireCard";
 import { BaseSettingsProvider as SettingsProvider } from "@/contexts/SettingsContext";
 import { Github } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Footer } from "../Footer";
+import { Header } from "../Header";
 
-export default function Main({ wildfires }: { wildfires: WildfireSummary[] }) {
-    const wildfiresByYear = wildfires.reduce((acc: { [key: string]: WildfireSummary[] }, wildfire) => {
-        const year = new Date(wildfire.wildfire.start).getFullYear();
+export default function Main() {
+    const [wildfires, setWildfires] = useState<Wildfire[] | null>(null);
+
+    useEffect(() => {
+        fetch(process.env.NEXT_PUBLIC_WILDFIRES_API + "/wildfires")
+            .then(res => res.json())
+            .then(data => setWildfires(data));
+    }, []);
+
+    if (!wildfires) {
+        return <div>Loading...</div>;
+    }
+
+    const wildfiresByYear = wildfires.reduce((acc: { [key: string]: Wildfire[] }, wildfire) => {
+        const year = new Date(wildfire.start).getFullYear();
         if (!acc[year]) {
             acc[year] = [];
         }
@@ -23,11 +38,9 @@ export default function Main({ wildfires }: { wildfires: WildfireSummary[] }) {
     return (
         <>
             <SettingsProvider>
-                <header className="sticky top-0 z-10 h-12 shadow-sm bg-background flex items-center justify-center">
-                    <h1 className="text-2xl">Wildfires in Greece</h1>
-                </header>
-                <div className="container mx-auto">
 
+                <Header />
+                <div className="container mx-auto">
                     <main>
                         {Object.keys(wildfiresByYear).sort(mostRecentFirst).map((year) => (
                             <div key={year} className="mb-16">
@@ -40,13 +53,7 @@ export default function Main({ wildfires }: { wildfires: WildfireSummary[] }) {
                             </div>
                         ))}
                     </main>
-                    <footer>
-                        <p className="text-center my-4 text-xs">
-                            <a href="https://github.com/christosporios/wildfires" target="_blank" rel="noopener noreferrer"><Github className="inline-block mr-2 w-4 h-4" /> Contribute</a>
-                            <span className="mx-2 text-muted-foreground">|</span>
-                            <a href="https://twitter.com/christosporios">@christosporios</a>
-                        </p>
-                    </footer>
+                    <Footer />
                 </div>
             </SettingsProvider>
         </>

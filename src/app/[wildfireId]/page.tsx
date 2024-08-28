@@ -1,14 +1,16 @@
-import Wildfire from "@/components/map/Wildfire";
+import Wildfire from "@/components/wildfire/Wildfire";
+import { ThemeProvider } from "next-themes";
 import { notFound } from "next/navigation";
 
 export default function Home({ params }: { params: { wildfireId: string } }) {
   const { wildfireId } = params;
-  let availableWildfireIds = ['varnavas'];
-  if (!availableWildfireIds.includes(wildfireId)) {
-    notFound();
-  }
 
   return (
-    <Wildfire wildfireId={wildfireId} />
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+    >
+      <Wildfire wildfireId={wildfireId} />
+    </ThemeProvider>
   );
 }

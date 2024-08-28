@@ -1,9 +1,9 @@
 import { usePageSettings } from "@/contexts/SettingsContext";
-import { Event as WildfireEvent } from "@/lib/types";
+import { PopupEvent as WildfireEvent } from "@/lib/types";
 import { Badge } from "../ui/badge";
 
 export function Events({ zuluTime, events }: { zuluTime: Date, events: WildfireEvent[] }) {
-    let { settings } = usePageSettings();
+    let { settings, isDarkMode } = usePageSettings();
 
     if (!settings.showEvents) {
         return <></>;
@@ -23,7 +23,7 @@ export function Events({ zuluTime, events }: { zuluTime: Date, events: WildfireE
                         <div className="flex-shrink-0 mr-2">
                             <Badge className='bg-orange-600 text-white mx-1'>112</Badge>
                         </div>
-                        <div className="flex-grow text-right">{e.description}</div>
+                        <div className="flex-grow text-right text-foreground">{e.description}</div>
                     </div>
                 )
             })}

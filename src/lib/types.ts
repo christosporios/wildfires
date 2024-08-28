@@ -1,26 +1,60 @@
+
+export type DataSourceData = {
+    period: { from: Date, to: Date };
+    data: TimedEvent[];
+    meta: any;
+}
+
+export type Wildfire = {
+    id: string;
+    name: string;
+    boundingBox: [Coordinates, Coordinates];
+    position: [number, number];
+    zoom: number;
+    start: string;
+    end?: string; // undefined for live wildfires
+    timezone: string;
+    metarAirport: string;
+    dataSources: string[];
+};
+
 export interface WildfireData {
-    metars: ParsedMetar[];
-    flights: { [flightId: string]: Flight };
     wildfire: Wildfire;
-    fires: {
-        viirs: Fire[];
-        modis: Fire[];
-    };
-    announcements: AnnouncementsData;
+    events: TimedEvent[];
+    recency: { [key: string]: { from: Date | null, to: Date | null } }
 }
 
 export interface WildfireSummary {
+    fires: Fire[];
     wildfire: Wildfire;
-    fires: {
-        viirs: Fire[];
-        modis: Fire[];
-    };
 }
 
-export interface ParsedMetar {
+/* events */
+
+export interface TimedEvent {
+    timestamp: number;
+    event: "flightPing" | "metar" | "fire" | "announcement";
+}
+
+export interface FlightPing extends TimedEvent {
+    event: "flightPing"
+    callsign: string;
+    icao24: string;
+    position: Coordinates;
+    altitude: number;
+    altitudeGeometric: number;
+    velocity: number;
+    verticalSpeed: number;
+    heading: number;
+    squawk: string;
+    timestamp: number;
+}
+
+export interface Metar extends TimedEvent {
+    event: "metar";
+    type: string;
     icaoId: string;
     raw: string;
-    timestamp: number;
     wind: {
         direction: number | 'VRB';
         speed: number;
@@ -30,6 +64,48 @@ export interface ParsedMetar {
     temperature: number;
     dewPoint: number;
     qnh: number;
+}
+
+export interface Fire extends TimedEvent {
+    event: "fire";
+    position: Coordinates;
+    timestamp: number;
+    instrument: string;
+    satellite: string;
+    brightness?: number;
+}
+
+export interface Announcement extends TimedEvent {
+    event: "announcement";
+    tweetUrl: string;
+    type: "alert" | "evacuate";
+    timestamp: number;
+
+    from: {
+        name: string;
+        position: Coordinates;
+    }[];
+
+    to: {
+        name: string
+        position: Coordinates
+    }[];
+}
+
+
+// [Latitude, Longitude]
+export type Coordinates = [number, number];
+
+export type WindSpeedUnit = 'knots' | 'beaufort' | 'kmh';
+export type AircraftSpeedUnit = 'knots' | 'kmh';
+export type TemperatureUnit = 'celsius' | 'fahrenheit';
+export type LengthUnit = 'meters' | 'feet';
+export type Theme = 'day-night' | 'dark' | 'light';
+
+export type PopupEvent = {
+    timestamp: number;
+    type: string;
+    description: string;
 }
 
 export class Weather {
@@ -58,173 +134,4 @@ export class Weather {
         const relativeHumidity = 100 * Math.exp(alphaDewPoint - alphaTemperature);
         return Math.round(relativeHumidity);
     }
-}
-
-export type Flight = {
-    timestamp: number;
-    altitudeFiltered: boolean;
-    data: {
-        flight: {
-            identification: {
-                id: string;
-                number: {
-                    default: null;
-                };
-                callsign: string;
-            };
-            status: {
-                live: boolean;
-                text: string;
-                icon: string;
-                estimated: null;
-                ambiguous: boolean;
-                generic: {
-                    status: {
-                        text: string;
-                        type: string;
-                        color: string;
-                        diverted: null;
-                    };
-                    eventTime: {
-                        utc: number;
-                        local: null;
-                    };
-                };
-            };
-            aircraft: {
-                model: {
-                    code: string;
-                    text: string;
-                };
-                identification: {
-                    modes: string;
-                    registration: string;
-                    serialNo: null;
-                    age: {
-                        availability: boolean;
-                    };
-                };
-                availability: {
-                    serialNo: boolean;
-                    age: boolean;
-                };
-            };
-            owner: null;
-            airline: null;
-            airport: {
-                origin: null;
-                destination: null;
-                real: null;
-            };
-            median: {
-                time: null;
-                delay: null;
-                timestamp: null;
-            };
-            track: Array<{
-                latitude: number;
-                longitude: number;
-                altitude: {
-                    feet: number;
-                    meters: number;
-                };
-                speed: {
-                    kmh: number;
-                    kts: number;
-                    mph: number;
-                };
-                verticalSpeed: {
-                    fpm: number;
-                    ms: number;
-                };
-                heading: number;
-                squawk: string;
-                timestamp: number;
-                ems: null;
-            }>;
-            aircraftImages: {
-                thumbnails: Array<ImageInfo>;
-                medium: Array<ImageInfo>;
-                large: Array<ImageInfo>;
-            };
-            availability: {
-                ems: boolean;
-            };
-        };
-    };
-};
-
-type ImageInfo = {
-    src: string;
-    link: string;
-    copyright: string;
-    source: string;
-};
-
-export type WindSpeedUnit = 'knots' | 'beaufort' | 'kmh';
-export type AircraftSpeedUnit = 'knots' | 'kmh';
-export type TemperatureUnit = 'celsius' | 'fahrenheit';
-export type LengthUnit = 'meters' | 'feet';
-export type Theme = 'day-night' | 'dark' | 'light';
-
-export type Wildfire = {
-    id: string;
-    name: string;
-    boundingBox: [[number, number], [number, number]];
-    position: [number, number];
-    zoom: number;
-    start: string;
-    end?: string; // undefined for live wildfires
-    timezone: string;
-    metarAirport: string;
-};
-
-export type ThermalAnomaly = {
-    latitude: number;
-    longitude: number;
-    acq_date: string;
-    acq_time: string;
-    version: string;
-    bright_t31: number;
-    daynight: "D" | "N";
-    brightness: number;
-    confidence: string | number;
-    instrument: "VIIRS" | "MODIS";
-    track: number;
-    satellite: string;
-    scan: number;
-    frp: number;
-};
-
-export interface Fire {
-    position: [number, number];
-    timestamp: number;
-    instrument: string;
-    satellite: string;
-    brightness: number;
-}
-
-type Coordinates = [number, number];
-
-export interface Announcement {
-    tweetUrl: string;
-    dateString: string;
-    type: "alert" | "evacuate";
-    timestamp: number;
-    from: string[];
-    to?: string[];
-}
-
-export interface AnnouncementsData {
-    areaNames: string[];
-    announcements: Announcement[];
-    areaCoordinates: {
-        [areaName: string]: Coordinates;
-    };
-}
-
-export interface Event {
-    timestamp: number;
-    type: string;
-    description: string;
 }

@@ -28,7 +28,7 @@ const UPDATE_INTERVAL = 50;
 export default function Timeline({ startDate, endDate, tick, timezone }: TimelineProps & { tick: (time: Date) => void }) {
     const [zuluTime, setZuluTime] = useState(startDate);
     const [isPlaying, setIsPlaying] = useState(false);
-    const availableSpeeds = [1, 4, 16, 64, 256, 1024, 4096];
+    const availableSpeeds = [1, 4, 16, 64, 256, 1024, 4096, 16384];
     const totalSeconds = differenceInMinutes(endDate, startDate) * 60;
     const [speed, setSpeed] = useState(() => {
         // Find the speed that will give a total play time of 150 seconds
@@ -253,26 +253,40 @@ function TimelineSlider({ startDate, endDate, currentTime, updateTime }: Timelin
         return markers;
     };
 
+    const differenceInDays = (date1: Date, date2: Date) => {
+        return Math.floor((date2.getTime() - date1.getTime()) / (1000 * 60 * 60 * 24));
+    };
+
     const generateDayLabels = () => {
         const labels = [];
         let currentDay = startDate;
         const endDay = endOfDay(endDate);
         const totalDays = differenceInMinutes(endDate, startDate) / (60 * 24);
-
         while (currentDay <= endDay) {
-            const startPosition = (differenceInMinutes(currentDay, startDate) / totalMinutes) * 100;
+            const startPosition = (differenceInMinutes(startOfDay(currentDay), startDate) / totalMinutes) * 100;
             const nextDay = addDays(startOfDay(currentDay), 1);
             const endPosition = (differenceInMinutes(nextDay > endDate ? endDate : nextDay, startDate) / totalMinutes) * 100;
             const width = endPosition - startPosition;
+            const centerPosition = startPosition + (width / 2);
 
-            labels.push(
-                <div key={currentDay.getTime()} className="absolute" style={{ left: `${startPosition}%`, width: `${width}%`, minWidth: '100px' }}>
-                    <div className="text-center text-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-                        <span className="sm:hidden">{format(currentDay, 'dd/MM')}</span>
-                        <span className="hidden sm:inline">{totalDays > 5 ? format(currentDay, 'MMM d') : format(currentDay, 'EEEE, MMMM d')}</span>
-                    </div>
-                </div>
-            );
+            // Only generate label if there's at least 16 hours in the day
+            if (differenceInMinutes(nextDay, currentDay) >= 16 * 60) {
+                const shouldShowLabel = totalDays <= 7 || (totalDays > 7);
+                if (shouldShowLabel) {
+                    labels.push(
+                        <div key={currentDay.getTime()} className="absolute" style={{ left: `${centerPosition}%`, transform: 'translateX(-50%)', width: `${width}%`, minWidth: '100px' }}>
+                            <div className="text-center text-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+                                <span className="sm:hidden">
+                                    {totalDays > 5 ? format(currentDay, 'd') : format(currentDay, 'dd/MM')}
+                                </span>
+                                <span className="hidden sm:inline">
+                                    {totalDays > 5 ? format(currentDay, 'MMM d') : format(currentDay, 'EEEE, MMMM d')}
+                                </span>
+                            </div>
+                        </div>
+                    );
+                }
+            }
 
             currentDay = nextDay;
         }
