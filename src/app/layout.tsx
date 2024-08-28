@@ -7,19 +7,17 @@ import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
-
 export const metadata: Metadata = {
-  title: "Varnava Wildfire 2024",
-  description: "A visualization of the Varnava Wildifire",
+  title: "Wildfire Tracker",
+  description: "A visualization tool for tracking wildfires",
   openGraph: {
     images: [
       {
         url: "/summary.png",
-
       }
     ],
-    title: "Varnava Wildfire 2024",
-    description: "A visualization of the Varnava Wildifire",
+    title: "Wildfire Tracker",
+    description: "A visualization tool for tracking wildfires",
   },
   twitter: {
     card: "summary_large_image",
@@ -28,8 +26,8 @@ export const metadata: Metadata = {
         url: "/summary.png",
       }
     ],
-    title: "Varnava Wildfire 2024",
-    description: "A visualization of the Varnava Wildifire",
+    title: "Wildfire Tracker",
+    description: "A visualization tool for tracking wildfires",
   }
 };
 
