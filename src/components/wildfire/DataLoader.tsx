@@ -51,7 +51,7 @@ export default function DataLoader({ loaded, wildfireId }: { loaded: (data: Wild
                 const startTime = new Date(wildfire.start);
                 const endTime = wildfire.end ? new Date(wildfire.end) : new Date();
                 const totalDuration = endTime.getTime() - startTime.getTime();
-                const intervalDuration = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+                const intervalDuration = 36 * 60 * 60 * 1000; // 36 hours in milliseconds
                 const intervals = Math.ceil(totalDuration / intervalDuration);
 
                 let allEvents: TimedEvent[] = [];
