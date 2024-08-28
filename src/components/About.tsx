@@ -27,7 +27,7 @@ export default function About() {
                         <div className="space-y-4">
                             <h4 className="text-xl font-medium">Adding new wildfires</h4>
                             <p className="text-gray-700">
-                                To add a new wildfire, make a pull request that adds a new file <a href="https://github.com/christosporios/wildfires-api/tree/main/wildfire-configs" className="text-blue-600 hover:underline">to this folder</a>. You'll need the coordinates of a bounding box that contains the fire, the ICAO identifier of a nearby airfield, and the start and end times of the fire. The API will collect the rest of the data.
+                                To add a new wildfire, make a pull request that adds a new file <a href="https://github.com/christosporios/wildfires-api/tree/main/wildfire-configs" className="text-blue-600 hover:underline">to this folder</a>. You&apos;ll need the coordinates of a bounding box that contains the fire, the ICAO identifier of a nearby airfield, and the start and end times of the fire. The API will collect the rest of the data.
                             </p>
 
                             <h4 className="text-xl font-medium">Code contributions</h4>

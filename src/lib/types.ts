@@ -115,7 +115,7 @@ export class Weather {
     public temperature: number;
     public humidity: number;
 
-    constructor(metar: ParsedMetar) {
+    constructor(metar: Metar) {
         this.windSpeed = metar.wind.speed;
         this.windDirection = metar.wind.direction;
         this.windGusting = metar.wind.gusting;
